@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Interval Runner</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --run: #FF4D2E;
+    --walk: #2ECC8A;
+    --bg: #0D0D0D;
+    --surface: #1A1A1A;
+    --surface2: #242424;
+    --text: #F5F5F0;
+    --muted: #888;
+    --spotify: #1DB954;
+    --radius: 20px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+  }
+
+  .screen { width: 100%; max-width: 430px; min-height: 100dvh; padding: 0 20px 40px; display: none; flex-direction: column; }
+  .screen.active { display: flex; }
+
+  /* ── SETUP ── */
+  #setup { padding-top: 60px; }
+
+  .app-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px; letter-spacing: 3px; line-height: 1; margin-bottom: 4px;
+  }
+  .app-subtitle { color: var(--muted); font-size: 14px; font-weight: 300; margin-bottom: 32px; }
+
+  .section-label {
+    font-size: 11px; font-weight: 500; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+  }
+
+  .card { background: var(--surface); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
+
+  .time-input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .time-input-group { display: flex; flex-direction: column; gap: 8px; }
+  .time-input-group label { font-size: 12px; color: var(--muted); font-weight: 500; }
+  .has-accent { color: var(--run) !important; }
+  .has-accent-walk { color: var(--walk) !important; }
+
+  .time-picker {
+    display: flex; align-items: center; background: var(--surface2);
+    border-radius: 12px; overflow: hidden; height: 52px;
+  }
+  .time-picker button {
+    background: none; border: none; color: var(--text); font-size: 22px;
+    width: 44px; height: 100%; cursor: pointer; display: flex;
+    align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.15s;
+  }
+  .time-picker button:active { background: rgba(255,255,255,0.08); }
+  .time-picker .time-val {
+    flex: 1; text-align: center; font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px; letter-spacing: 1px; user-select: none;
+  }
+
+  .duration-mode { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+  .mode-btn {
+    background: var(--surface2); border: 2px solid transparent; border-radius: 12px;
+    color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 13px;
+    font-weight: 500; padding: 12px; cursor: pointer; transition: all 0.2s; text-align: center;
+  }
+  .mode-btn.active { border-color: var(--run); color: var(--text); background: rgba(255,77,46,0.1); }
+
+  /* ── SPOTIFY ── */
+  .spotify-card {
+    background: var(--surface); border-radius: var(--radius); padding: 20px;
+    margin-bottom: 16px; border: 1px solid transparent; transition: border-color 0.3s;
+  }
+  .spotify-card.connected { border-color: rgba(29,185,84,0.3); }
+
+  .spotify-connect-btn {
+    width: 100%; padding: 16px; background: var(--spotify); border: none;
+    border-radius: 14px; color: #000; font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    gap: 10px; transition: opacity 0.2s;
+  }
+  .spotify-connect-btn:active { opacity: 0.85; }
+
+  .spotify-status { display: none; align-items: center; gap: 12px; }
+  .spotify-status.visible { display: flex; }
+
+  .spotify-avatar {
+    width: 42px; height: 42px; border-radius: 50%; background: var(--surface2);
+    overflow: hidden; flex-shrink: 0; display: flex; align-items: center;
+    justify-content: center; font-size: 18px;
+  }
+  .spotify-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+  .spotify-info { flex: 1; min-width: 0; }
+  .spotify-name { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .spotify-connected-label { font-size: 11px; color: var(--spotify); margin-top: 2px; }
+
+  .spotify-disconnect {
+    background: none; border: none; color: var(--muted);
+    font-size: 12px; cursor: pointer; padding: 4px 8px; border-radius: 8px;
+  }
+
+  .start-btn {
+    width: 100%; padding: 20px; background: var(--run); border: none;
+    border-radius: var(--radius); color: white; font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px; letter-spacing: 3px; cursor: pointer; margin-top: auto;
+    transition: transform 0.1s, opacity 0.1s;
+  }
+  .start-btn:active { transform: scale(0.97); opacity: 0.9; }
+
+  /* ── TIMER ── */
+  #timer { padding-top: 0; justify-content: space-between; }
+
+  .timer-header {
+    display: flex; align-items: center; justify-content: space-between; padding: 56px 0 16px;
+  }
+  .back-btn {
+    background: var(--surface); border: none; color: var(--text); border-radius: 12px;
+    width: 44px; height: 44px; display: flex; align-items: center;
+    justify-content: center; font-size: 20px; cursor: pointer;
+  }
+  .round-badge { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 2px; color: var(--muted); }
+
+  .ring-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1; justify-content: center; }
+  .phase-label { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 4px; transition: color 0.4s; }
+
+  .ring-container { position: relative; width: 240px; height: 240px; }
+  .ring-container svg { transform: rotate(-90deg); position: absolute; top: 0; left: 0; }
+  #bg-circle { fill: none; stroke: var(--surface); stroke-width: 14; }
+  #progress-circle { fill: none; stroke: var(--run); stroke-width: 14; stroke-linecap: round; transition: stroke-dashoffset 1s linear, stroke 0.4s; }
+
+  .ring-inner { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .big-time { font-family: 'Bebas Neue', sans-serif; font-size: 72px; line-height: 1; letter-spacing: 2px; }
+  .next-label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .total-remaining { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 2px; color: var(--muted); }
+
+  /* ── NOW PLAYING ── */
+  .now-playing {
+    background: var(--surface); border-radius: 18px; padding: 12px 16px;
+    display: none; align-items: center; gap: 12px; margin: 8px 0; width: 100%;
+  }
+  .now-playing.visible { display: flex; }
+
+  .np-art { width: 44px; height: 44px; border-radius: 8px; background: var(--surface2); flex-shrink: 0; overflow: hidden; }
+  .np-art img { width: 100%; height: 100%; object-fit: cover; }
+
+  .np-info { flex: 1; min-width: 0; }
+  .np-track { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .np-artist { font-size: 11px; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .np-controls { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .np-btn {
+    background: none; border: none; color: var(--text); font-size: 18px; cursor: pointer;
+    width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; transition: background 0.15s;
+  }
+  .np-btn:active { background: rgba(255,255,255,0.1); }
+  .np-btn.play-pause { background: var(--spotify); color: #000; font-size: 16px; }
+
+  /* ── CONTROLS ── */
+  .controls { display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 12px; padding-bottom: 20px; }
+  .ctrl-btn {
+    height: 68px; border: none; border-radius: 18px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; transition: transform 0.1s;
+  }
+  .ctrl-btn:active { transform: scale(0.94); }
+  .ctrl-secondary { background: var(--surface); color: var(--text); }
+  #play-pause-btn {
+    background: var(--run); font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px; letter-spacing: 2px; color: white;
+  }
+
+  /* ── DONE ── */
+  #done { padding-top: 60px; align-items: center; text-align: center; }
+  .done-icon { font-size: 72px; margin-bottom: 20px; }
+  .done-title { font-family: 'Bebas Neue', sans-serif; font-size: 52px; letter-spacing: 3px; margin-bottom: 8px; }
+  .done-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; margin: 32px 0; }
+  .stat-card { background: var(--surface); border-radius: var(--radius); padding: 20px; }
+  .stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 40px; letter-spacing: 1px; }
+  .stat-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .again-btn {
+    width: 100%; padding: 20px; background: var(--run); border: none;
+    border-radius: var(--radius); color: white; font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px; letter-spacing: 3px; cursor: pointer; margin-top: auto;
+  }
+
+  @keyframes phasePulse {
+    0%{transform:scale(1)} 50%{transform:scale(1.04)} 100%{transform:scale(1)}
+  }
+  .pulse { animation: phasePulse 0.4s ease; }
+</style>
+</head>
+<body>
+
+<!-- ══════════ SETUP ══════════ -->
+<div class="screen active" id="setup">
+  <div class="app-title">INTERVAL<br>RUNNER</div>
+  <div class="app-subtitle">Set your pace. Run with purpose.</div>
+
+  <div class="section-label">Interval Timing</div>
+  <div class="card">
+    <div class="time-input-row">
+      <div class="time-input-group">
+        <label class="has-accent">🏃 RUN (mm:ss)</label>
+        <div class="time-picker">
+          <button onclick="adjust('run',-60)">−</button>
+          <span class="time-val" id="run-min">01</span>:<span class="time-val" id="run-sec">00</span>
+          <button onclick="adjust('run',60)">+</button>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:4px;">
+          <button class="mode-btn" onclick="adjust('run',30)" style="padding:6px;font-size:11px;flex:1">+30s</button>
+          <button class="mode-btn" onclick="adjust('run',-30)" style="padding:6px;font-size:11px;flex:1">−30s</button>
+        </div>
+      </div>
+      <div class="time-input-group">
+        <label class="has-accent-walk">🚶 WALK (mm:ss)</label>
+        <div class="time-picker">
+          <button onclick="adjust('walk',-60)">−</button>
+          <span class="time-val" id="walk-min">00</span>:<span class="time-val" id="walk-sec">30</span>
+          <button onclick="adjust('walk',60)">+</button>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:4px;">
+          <button class="mode-btn" onclick="adjust('walk',30)" style="padding:6px;font-size:11px;flex:1">+30s</button>
+          <button class="mode-btn" onclick="adjust('walk',-30)" style="padding:6px;font-size:11px;flex:1">−30s</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Workout Duration</div>
+  <div class="card">
+    <div class="duration-mode">
+      <button class="mode-btn active" id="mode-rounds" onclick="setMode('rounds')">By Rounds</button>
+      <button class="mode-btn" id="mode-time" onclick="setMode('time')">By Total Time</button>
+    </div>
+    <div id="rounds-input">
+      <div class="time-input-group">
+        <label>Number of Rounds</label>
+        <div class="time-picker">
+          <button onclick="adjustVal('rounds',-1)">−</button>
+          <span class="time-val" id="rounds-val">8</span>
+          <button onclick="adjustVal('rounds',1)">+</button>
+        </div>
+      </div>
+    </div>
+    <div id="totaltime-input" style="display:none">
+      <div class="time-input-group">
+        <label>Total Time (minutes)</label>
+        <div class="time-picker">
+          <button onclick="adjustVal('total-time',-1)">−</button>
+          <span class="time-val" id="total-time-val">20</span>
+          <button onclick="adjustVal('total-time',1)">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Music</div>
+  <div class="spotify-card" id="spotify-card">
+    <div id="spotify-connect-wrap">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Connect Spotify Premium to play music. Volume ducks automatically during audio cues.</p>
+      <button class="spotify-connect-btn" onclick="spotifyLogin()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+        </svg>
+        Connect Spotify
+      </button>
+    </div>
+    <div class="spotify-status" id="spotify-status">
+      <div class="spotify-avatar" id="spotify-avatar">🎵</div>
+      <div class="spotify-info">
+        <div class="spotify-name" id="spotify-user-name">—</div>
+        <div class="spotify-connected-label">✓ Spotify Connected</div>
+      </div>
+      <button class="spotify-disconnect" onclick="spotifyDisconnect()">Disconnect</button>
+    </div>
+  </div>
+
+  <button class="start-btn" onclick="startWorkout()">START WORKOUT</button>
+</div>
+
+<!-- ══════════ TIMER ══════════ -->
+<div class="screen" id="timer">
+  <div class="timer-header">
+    <button class="back-btn" onclick="stopWorkout()">←</button>
+    <span class="round-badge" id="round-display">ROUND 1 / 8</span>
+    <div style="width:44px"></div>
+  </div>
+
+  <div class="ring-wrap">
+    <div class="phase-label" id="phase-label">RUN</div>
+    <div class="ring-container" id="ring-container">
+      <svg width="240" height="240" viewBox="0 0 240 240">
+        <circle id="bg-circle" cx="120" cy="120" r="106"/>
+        <circle id="progress-circle" cx="120" cy="120" r="106"/>
+      </svg>
+      <div class="ring-inner">
+        <div class="big-time" id="big-time">01:00</div>
+        <div class="next-label" id="next-label">next: WALK 00:30</div>
+      </div>
+    </div>
+    <div class="total-remaining" id="total-remaining">TOTAL: 16:00</div>
+  </div>
+
+  <div class="now-playing" id="now-playing">
+    <div class="np-art"><img id="np-art-img" src="" alt="" style="display:none"/></div>
+    <div class="np-info">
+      <div class="np-track" id="np-track">Not playing</div>
+      <div class="np-artist" id="np-artist">—</div>
+    </div>
+    <div class="np-controls">
+      <button class="np-btn" onclick="spotifyPrev()">⏮</button>
+      <button class="np-btn play-pause" id="np-play-pause" onclick="spotifyPlayPause()">▶</button>
+      <button class="np-btn" onclick="spotifyNext()">⏭</button>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="ctrl-btn ctrl-secondary" onclick="skipPhase()">⏭</button>
+    <button class="ctrl-btn" id="play-pause-btn" onclick="togglePause()">PAUSE</button>
+    <button class="ctrl-btn ctrl-secondary" onclick="stopWorkout()">✕</button>
+  </div>
+</div>
+
+<!-- ══════════ DONE ══════════ -->
+<div class="screen" id="done">
+  <div class="done-icon">🏅</div>
+  <div class="done-title">WORKOUT<br>COMPLETE</div>
+  <div style="color:var(--muted);font-size:14px">Great job pushing through!</div>
+  <div class="done-stats">
+    <div class="stat-card"><div class="stat-val" id="done-rounds">—</div><div class="stat-label">Rounds</div></div>
+    <div class="stat-card"><div class="stat-val" id="done-time">—</div><div class="stat-label">Total Time</div></div>
+    <div class="stat-card"><div class="stat-val" id="done-run">—</div><div class="stat-label">Run Time</div></div>
+    <div class="stat-card"><div class="stat-val" id="done-walk">—</div><div class="stat-label">Walk Time</div></div>
+  </div>
+  <button class="again-btn" onclick="goSetup()">GO AGAIN</button>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════
+const SPOTIFY_CLIENT_ID = 'e76befdd24364335827ceb034deb82ec';
+const REDIRECT_URI = 'https://interval-runner-qpyoat486-tommykoehlers-projects.vercel.app';
+const SCOPES = [
+  'streaming',
+  'user-read-email',
+  'user-read-private',
+  'user-modify-playback-state',
+  'user-read-playback-state'
+].join(' ');
+
+// ══════════════════════════════════════════
+// PKCE HELPERS
+// ══════════════════════════════════════════
+async function generateCodeVerifier() {
+  const arr = new Uint8Array(64);
+  crypto.getRandomValues(arr);
+  return btoa(String.fromCharCode(...arr)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
+}
+
+async function generateCodeChallenge(verifier) {
+  const data = new TextEncoder().encode(verifier);
+  const digest = await crypto.subtle.digest('SHA-256', data);
+  return btoa(String.fromCharCode(...new Uint8Array(digest))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
+}
+
+async function spotifyLogin() {
+  const verifier = await generateCodeVerifier();
+  const challenge = await generateCodeChallenge(verifier);
+  sessionStorage.setItem('pkce_verifier', verifier);
+  const params = new URLSearchParams({
+    client_id: SPOTIFY_CLIENT_ID,
+    response_type: 'code',
+    redirect_uri: REDIRECT_URI,
+    code_challenge_method: 'S256',
+    code_challenge: challenge,
+    scope: SCOPES,
+  });
+  window.location.href = 'https://accounts.spotify.com/authorize?' + params;
+}
+
+async function exchangeCode(code) {
+  const verifier = sessionStorage.getItem('pkce_verifier');
+  if(!verifier) return null;
+  const r = await fetch('https://accounts.spotify.com/api/token', {
+    method: 'POST',
+    headers: {'Content-Type':'application/x-www-form-urlencoded'},
+    body: new URLSearchParams({
+      client_id: SPOTIFY_CLIENT_ID,
+      grant_type: 'authorization_code',
+      code, redirect_uri: REDIRECT_URI, code_verifier: verifier
+    })
+  });
+  sessionStorage.removeItem('pkce_verifier');
+  return r.ok ? r.json() : null;
+}
+
+async function refreshToken(rt) {
+  const r = await fetch('https://accounts.spotify.com/api/token', {
+    method: 'POST',
+    headers: {'Content-Type':'application/x-www-form-urlencoded'},
+    body: new URLSearchParams({
+      client_id: SPOTIFY_CLIENT_ID,
+      grant_type: 'refresh_token',
+      refresh_token: rt
+    })
+  });
+  return r.ok ? r.json() : null;
+}
+
+// ══════════════════════════════════════════
+// SPOTIFY STATE
+// ══════════════════════════════════════════
+const sp = {
+  accessToken: null, refreshToken: null, expiresAt: 0,
+  player: null, deviceId: null, connected: false,
+  isPlaying: false, pollTimer: null,
+};
+
+function saveTokens(d) {
+  sp.accessToken = d.access_token;
+  if(d.refresh_token) sp.refreshToken = d.refresh_token;
+  sp.expiresAt = Date.now() + d.expires_in * 1000 - 60000;
+  localStorage.setItem('sp_a', d.access_token);
+  if(d.refresh_token) localStorage.setItem('sp_r', d.refresh_token);
+  localStorage.setItem('sp_e', sp.expiresAt);
+}
+
+function loadTokens() {
+  sp.accessToken = localStorage.getItem('sp_a');
+  sp.refreshToken = localStorage.getItem('sp_r');
+  sp.expiresAt = parseInt(localStorage.getItem('sp_e')||'0');
+}
+
+async function ensureToken() {
+  if(!sp.accessToken) return false;
+  if(Date.now() < sp.expiresAt) return true;
+  if(!sp.refreshToken) return false;
+  const d = await refreshToken(sp.refreshToken);
+  if(!d) { spotifyDisconnect(); return false; }
+  saveTokens(d); return true;
+}
+
+async function api(path, method='GET', body=null) {
+  if(!(await ensureToken())) return null;
+  const opts = { method, headers: { Authorization: 'Bearer '+sp.accessToken } };
+  if(body) { opts.headers['Content-Type']='application/json'; opts.body=JSON.stringify(body); }
+  const r = await fetch('https://api.spotify.com/v1'+path, opts);
+  if(r.status===204||r.status===202||r.status===200) {
+    try { return await r.json(); } catch { return {}; }
+  }
+  return null;
+}
+
+// ══════════════════════════════════════════
+// SPOTIFY UI
+// ══════════════════════════════════════════
+async function finishConnect() {
+  sp.connected = true;
+  document.getElementById('spotify-connect-wrap').style.display = 'none';
+  document.getElementById('spotify-status').classList.add('visible');
+  document.getElementById('spotify-card').classList.add('connected');
+
+  const me = await api('/me');
+  if(me) {
+    document.getElementById('spotify-user-name').textContent = me.display_name || me.id;
+    if(me.images && me.images[0]) {
+      document.getElementById('spotify-avatar').innerHTML = `<img src="${me.images[0].url}" alt=""/>`;
+    }
+  }
+  loadSDK();
+}
+
+function spotifyDisconnect() {
+  ['sp_a','sp_r','sp_e'].forEach(k => localStorage.removeItem(k));
+  sp.accessToken = sp.refreshToken = null;
+  sp.connected = false;
+  if(sp.player) { sp.player.disconnect(); sp.player = null; }
+  clearInterval(sp.pollTimer);
+  document.getElementById('spotify-connect-wrap').style.display = 'block';
+  document.getElementById('spotify-status').classList.remove('visible');
+  document.getElementById('spotify-card').classList.remove('connected');
+  document.getElementById('now-playing').classList.remove('visible');
+}
+
+function updateNowPlaying(item, playing) {
+  if(!item) return;
+  document.getElementById('now-playing').classList.add('visible');
+  document.getElementById('np-track').textContent = item.name || '—';
+  document.getElementById('np-artist').textContent = (item.artists||[]).map(a=>a.name).join(', ')||'—';
+  const img = document.getElementById('np-art-img');
+  const art = item.album && item.album.images && item.album.images[0];
+  if(art) { img.src = art.url; img.style.display = 'block'; }
+  document.getElementById('np-play-pause').textContent = playing ? '⏸' : '▶';
+  sp.isPlaying = playing;
+}
+
+async function pollPlayback() {
+  if(!sp.connected) return;
+  const d = await api('/me/player');
+  if(d && d.item) updateNowPlaying(d.item, d.is_playing);
+}
+
+// ══════════════════════════════════════════
+// WEB PLAYBACK SDK
+// ══════════════════════════════════════════
+function loadSDK() {
+  if(window.Spotify) { createPlayer(); return; }
+  window.onSpotifyWebPlaybackSDKReady = createPlayer;
+  if(!document.getElementById('sp-sdk')) {
+    const s = document.createElement('script');
+    s.id = 'sp-sdk';
+    s.src = 'https://sdk.scdn.co/spotify-player.js';
+    document.head.appendChild(s);
+  }
+}
+
+function createPlayer() {
+  sp.player = new Spotify.Player({
+    name: 'Interval Runner',
+    getOAuthToken: async cb => { await ensureToken(); cb(sp.accessToken); },
+    volume: 0.8
+  });
+  sp.player.addListener('ready', ({ device_id }) => {
+    sp.deviceId = device_id;
+    api('/me/player', 'PUT', { device_ids: [device_id], play: false });
+  });
+  sp.player.addListener('player_state_changed', s => {
+    if(!s) return;
+    updateNowPlaying(s.track_window.current_track, !s.paused);
+  });
+  sp.player.connect();
+  sp.pollTimer = setInterval(pollPlayback, 4000);
+}
+
+// ══════════════════════════════════════════
+// PLAYBACK CONTROLS
+// ══════════════════════════════════════════
+async function spotifyPlayPause() {
+  if(!sp.connected) return;
+  if(sp.isPlaying) { await api('/me/player/pause','PUT'); sp.isPlaying=false; document.getElementById('np-play-pause').textContent='▶'; }
+  else { await api('/me/player/play','PUT'); sp.isPlaying=true; document.getElementById('np-play-pause').textContent='⏸'; }
+}
+async function spotifyNext() { if(sp.connected) await api('/me/player/next','POST'); }
+async function spotifyPrev() { if(sp.connected) await api('/me/player/previous','POST'); }
+
+// ══════════════════════════════════════════
+// AUDIO DUCKING
+// ══════════════════════════════════════════
+async function duck() { if(sp.player) await sp.player.setVolume(0.12); }
+async function unduck(ms=1800) { if(sp.player) setTimeout(()=>sp.player.setVolume(0.8), ms); }
+
+// ══════════════════════════════════════════
+// AUDIO CUES
+// ══════════════════════════════════════════
+let audioCtx;
+function ensureAudio() {
+  if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==='suspended') audioCtx.resume();
+}
+function beep(freq, dur, type='sine', vol=0.5) {
+  ensureAudio();
+  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+  o.connect(g); g.connect(audioCtx.destination);
+  o.type=type; o.frequency.setValueAtTime(freq, audioCtx.currentTime);
+  g.gain.setValueAtTime(vol, audioCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime+dur);
+  o.start(); o.stop(audioCtx.currentTime+dur);
+}
+function speak(t) {
+  if(!window.speechSynthesis) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(t); u.rate=1.1;
+  speechSynthesis.speak(u);
+}
+function playRunCue() { duck(); beep(880,0.15,'square',0.4); setTimeout(()=>beep(1320,0.25,'square',0.5),160); speak('Run!'); unduck(1600); }
+function playWalkCue() { duck(); beep(660,0.15,'triangle',0.4); setTimeout(()=>beep(440,0.3,'triangle',0.4),160); speak('Walk!'); unduck(1600); }
+function playCountdown() { beep(440,0.1,'sine',0.3); }
+function playDone() { duck(); [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,i===3?0.4:0.1,'square',i===3?0.5:0.4),i*120)); speak('Workout complete! Great job!'); }
+
+// ══════════════════════════════════════════
+// SETUP HELPERS
+// ══════════════════════════════════════════
+const pad = n => String(Math.max(0,n)).padStart(2,'0');
+function getTimeSec(p) { return parseInt(document.getElementById(p+'-min').textContent)*60+parseInt(document.getElementById(p+'-sec').textContent); }
+function setTimeDisplay(p, s) {
+  s = Math.max(5,s);
+  document.getElementById(p+'-min').textContent = pad(Math.floor(s/60));
+  document.getElementById(p+'-sec').textContent = pad(s%60);
+}
+function adjust(p, d) { setTimeDisplay(p, getTimeSec(p)+d); }
+function adjustVal(id, d) { const el=document.getElementById(id+'-val'); el.textContent=Math.max(1,parseInt(el.textContent)+d); }
+function setMode(m) {
+  window._mode=m;
+  document.getElementById('mode-rounds').classList.toggle('active',m==='rounds');
+  document.getElementById('mode-time').classList.toggle('active',m==='time');
+  document.getElementById('rounds-input').style.display=m==='rounds'?'block':'none';
+  document.getElementById('totaltime-input').style.display=m==='time'?'block':'none';
+}
+window._mode='rounds';
+
+// ══════════════════════════════════════════
+// TIMER
+// ══════════════════════════════════════════
+const T = { runSec:0,walkSec:0,phase:'run',round:1,maxRounds:0,phaseLeft:0,totalLeft:0,paused:false,timer:null,elapsed:0,runAccum:0,walkAccum:0 };
+
+function startWorkout() {
+  ensureAudio();
+  T.runSec = getTimeSec('run');
+  T.walkSec = getTimeSec('walk');
+  T.phase = 'run'; T.round = 1; T.paused = false;
+  T.elapsed = T.runAccum = T.walkAccum = 0;
+
+  if(window._mode==='rounds') {
+    T.maxRounds = parseInt(document.getElementById('rounds-val').textContent);
+    T.totalLeft = T.maxRounds*(T.runSec+T.walkSec);
+  } else {
+    T.totalLeft = parseInt(document.getElementById('total-time-val').textContent)*60;
+    T.maxRounds = Math.floor(T.totalLeft/(T.runSec+T.walkSec));
+  }
+  T.phaseLeft = T.runSec;
+
+  showScreen('timer');
+  updateUI();
+  playRunCue();
+  if(sp.connected && !sp.isPlaying) api('/me/player/play','PUT');
+  T.timer = setInterval(tick, 1000);
+}
+
+function tick() {
+  if(T.paused) return;
+  T.phaseLeft--; T.totalLeft=Math.max(0,T.totalLeft-1); T.elapsed++;
+  T.phase==='run' ? T.runAccum++ : T.walkAccum++;
+  if(T.phaseLeft<=3&&T.phaseLeft>0) playCountdown();
+  if(T.phaseLeft<=0) { nextPhase(); return; }
+  if(T.totalLeft<=0) { finishWorkout(); return; }
+  updateUI();
+}
+
+function nextPhase() {
+  if(T.phase==='run') { T.phase='walk'; T.phaseLeft=T.walkSec; playWalkCue(); }
+  else {
+    T.round++;
+    if(window._mode==='rounds'&&T.round>T.maxRounds) { finishWorkout(); return; }
+    T.phase='run'; T.phaseLeft=T.runSec; playRunCue();
+  }
+  const rc=document.getElementById('ring-container');
+  rc.classList.remove('pulse'); void rc.offsetWidth; rc.classList.add('pulse');
+  updateUI();
+}
+
+function skipPhase() { T.phaseLeft=0; }
+
+function togglePause() {
+  T.paused=!T.paused;
+  document.getElementById('play-pause-btn').textContent=T.paused?'RESUME':'PAUSE';
+  if(sp.connected) T.paused ? api('/me/player/pause','PUT') : api('/me/player/play','PUT');
+}
+
+function stopWorkout() {
+  clearInterval(T.timer); T.timer=null;
+  speechSynthesis && speechSynthesis.cancel();
+  showScreen('setup');
+}
+
+function finishWorkout() {
+  clearInterval(T.timer); T.timer=null; playDone();
+  document.getElementById('done-rounds').textContent = T.round-1;
+  document.getElementById('done-time').textContent = fmt(T.elapsed);
+  document.getElementById('done-run').textContent = fmt(T.runAccum);
+  document.getElementById('done-walk').textContent = fmt(T.walkAccum);
+  showScreen('done');
+}
+
+function fmt(s) { const m=Math.floor(s/60); return m>0?m+'m '+pad(s%60)+'s':s+'s'; }
+
+function updateUI() {
+  const run = T.phase==='run';
+  const col = run?'var(--run)':'var(--walk)';
+  document.getElementById('phase-label').textContent = run?'RUN':'WALK';
+  document.getElementById('phase-label').style.color = col;
+  document.getElementById('big-time').textContent = pad(Math.floor(T.phaseLeft/60))+':'+pad(T.phaseLeft%60);
+  const nextName=run?'WALK':'RUN', nextSec=run?T.walkSec:T.runSec;
+  document.getElementById('next-label').textContent = `next: ${nextName} ${pad(Math.floor(nextSec/60))}:${pad(nextSec%60)}`;
+  document.getElementById('round-display').textContent = `ROUND ${T.round} / ${window._mode==='rounds'?T.maxRounds:'∞'}`;
+  document.getElementById('total-remaining').textContent = `TOTAL: ${pad(Math.floor(T.totalLeft/60))}:${pad(T.totalLeft%60)}`;
+  const r=106, circ=2*Math.PI*r, total=run?T.runSec:T.walkSec;
+  const pc=document.getElementById('progress-circle');
+  pc.style.strokeDasharray=circ; pc.style.strokeDashoffset=circ*(1-T.phaseLeft/total); pc.style.stroke=col;
+  document.getElementById('play-pause-btn').style.background=col;
+}
+
+function showScreen(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+function goSetup() { showScreen('setup'); }
+
+// ══════════════════════════════════════════
+// INIT & CALLBACK HANDLER
+// ══════════════════════════════════════════
+(async function init() {
+  // Init ring
+  const r=106, circ=2*Math.PI*r, pc=document.getElementById('progress-circle');
+  pc.style.strokeDasharray=circ; pc.style.strokeDashoffset=0;
+
+  // Handle OAuth callback
+  const params = new URLSearchParams(window.location.search);
+  if(params.has('code')) {
+    history.replaceState({}, '', '/');
+    const d = await exchangeCode(params.get('code'));
+    if(d && d.access_token) { saveTokens(d); await finishConnect(); }
+    return;
+  }
+  if(params.has('error')) { history.replaceState({}, '', '/'); return; }
+
+  // Restore saved session
+  loadTokens();
+  if(sp.accessToken && await ensureToken()) await finishConnect();
+})();
+</script>
+</body>
+</html>
