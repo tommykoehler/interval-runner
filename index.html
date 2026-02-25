@@ -260,25 +260,25 @@
       <div class="time-input-group">
         <label class="has-accent">🏃 RUN (mm:ss)</label>
         <div class="time-picker">
-          <button onclick="adjust('run',-60)">−</button>
-          <span class="time-val" id="run-min">01</span>:<span class="time-val" id="run-sec">00</span>
-          <button onclick="adjust('run',60)">+</button>
+          <button onclick="adjust('run',-5)">−</button>
+          <span class="time-val" id="run-min" onclick="openTimeInput('run')" style="cursor:pointer;">01</span>:<span class="time-val" id="run-sec" onclick="openTimeInput('run')" style="cursor:pointer;">00</span>
+          <button onclick="adjust('run',5)">+</button>
         </div>
         <div style="display:flex;gap:6px;margin-top:4px;">
-          <button class="pill-btn" onclick="adjust('run',30)" style="padding:6px;font-size:11px;flex:1">+30s</button>
-          <button class="pill-btn" onclick="adjust('run',-30)" style="padding:6px;font-size:11px;flex:1">−30s</button>
+          <button class="pill-btn" onclick="adjust('run',15)" style="padding:6px;font-size:11px;flex:1">+15s</button>
+          <button class="pill-btn" onclick="adjust('run',-15)" style="padding:6px;font-size:11px;flex:1">−15s</button>
         </div>
       </div>
       <div class="time-input-group">
         <label class="has-accent-walk">🚶 WALK (mm:ss)</label>
         <div class="time-picker">
-          <button onclick="adjust('walk',-60)">−</button>
-          <span class="time-val" id="walk-min">00</span>:<span class="time-val" id="walk-sec">30</span>
-          <button onclick="adjust('walk',60)">+</button>
+          <button onclick="adjust('walk',-5)">−</button>
+          <span class="time-val" id="walk-min" onclick="openTimeInput('walk')" style="cursor:pointer;">00</span>:<span class="time-val" id="walk-sec" onclick="openTimeInput('walk')" style="cursor:pointer;">30</span>
+          <button onclick="adjust('walk',5)">+</button>
         </div>
         <div style="display:flex;gap:6px;margin-top:4px;">
-          <button class="pill-btn" onclick="adjust('walk',30)" style="padding:6px;font-size:11px;flex:1">+30s</button>
-          <button class="pill-btn" onclick="adjust('walk',-30)" style="padding:6px;font-size:11px;flex:1">−30s</button>
+          <button class="pill-btn" onclick="adjust('walk',15)" style="padding:6px;font-size:11px;flex:1">+15s</button>
+          <button class="pill-btn" onclick="adjust('walk',-15)" style="padding:6px;font-size:11px;flex:1">−15s</button>
         </div>
       </div>
     </div>
@@ -454,6 +454,29 @@
     <button class="crop-btn confirm" onclick="confirmCrop()">Use Photo</button>
   </div>
 </div>
+<!-- ══════════ TIME INPUT MODAL ══════════ -->
+<div class="modal-overlay" id="time-input-modal">
+  <div class="modal">
+    <div class="modal-title" id="time-input-title">SET RUN TIME</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Enter time in minutes and seconds</p>
+    <div style="display:flex;gap:12px;align-items:center;">
+      <div style="flex:1;">
+        <div style="font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Minutes</div>
+        <input type="number" id="time-input-min" min="0" max="59" placeholder="0" inputmode="numeric" pattern="[0-9]*" style="text-align:center;font-size:28px;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;"/>
+      </div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;padding-top:18px;">:</div>
+      <div style="flex:1;">
+        <div style="font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Seconds</div>
+        <input type="number" id="time-input-sec" min="0" max="59" placeholder="0" inputmode="numeric" pattern="[0-9]*" style="text-align:center;font-size:28px;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;"/>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" onclick="closeTimeInput()">Cancel</button>
+      <button class="modal-btn confirm" onclick="confirmTimeInput()">Set Time</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══════════ PRESET MODAL ══════════ -->
 <div class="modal-overlay" id="preset-modal">
   <div class="modal">
@@ -982,6 +1005,31 @@ const pad=n=>String(Math.max(0,n)).padStart(2,'0');
 function getTimeSec(p){return parseInt(document.getElementById(p+'-min').textContent)*60+parseInt(document.getElementById(p+'-sec').textContent);}
 function setTimeDisplay(p,s){s=Math.max(5,s);document.getElementById(p+'-min').textContent=pad(Math.floor(s/60));document.getElementById(p+'-sec').textContent=pad(s%60);}
 window.adjust=(p,d)=>setTimeDisplay(p,getTimeSec(p)+d);
+
+// ── TAP TO TYPE TIME ──
+let _timeInputPrefix = null;
+window.openTimeInput = (prefix) => {
+  _timeInputPrefix = prefix;
+  const total = getTimeSec(prefix);
+  document.getElementById('time-input-min').value = Math.floor(total/60) || '';
+  document.getElementById('time-input-sec').value = total%60 || '';
+  document.getElementById('time-input-title').textContent = prefix==='run' ? 'SET RUN TIME' : 'SET WALK TIME';
+  document.getElementById('time-input-modal').classList.add('open');
+  setTimeout(() => document.getElementById('time-input-min').focus(), 100);
+};
+window.closeTimeInput = () => {
+  document.getElementById('time-input-modal').classList.remove('open');
+  _timeInputPrefix = null;
+};
+window.confirmTimeInput = () => {
+  if(!_timeInputPrefix) return;
+  const mins = parseInt(document.getElementById('time-input-min').value) || 0;
+  const secs = parseInt(document.getElementById('time-input-sec').value) || 0;
+  const total = (mins*60) + secs;
+  if(total < 5) { alert('Minimum time is 5 seconds.'); return; }
+  setTimeDisplay(_timeInputPrefix, total);
+  closeTimeInput();
+};
 window.adjustVal=(id,d)=>{const el=document.getElementById(id+'-val');el.textContent=Math.max(1,parseInt(el.textContent)+d);};
 window.setMode=(m)=>{window._mode=m;document.getElementById('mode-rounds').classList.toggle('active',m==='rounds');document.getElementById('mode-time').classList.toggle('active',m==='time');document.getElementById('rounds-input').style.display=m==='rounds'?'block':'none';document.getElementById('totaltime-input').style.display=m==='time'?'block':'none';};
 window._mode='rounds'; window._presets=[];
