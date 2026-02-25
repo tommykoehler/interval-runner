@@ -318,7 +318,25 @@
   </div>
   <div class="section-label" style="margin-top:16px;">Presets</div>
   <div style="margin-bottom:16px;"><div class="presets-scroll" id="presets-scroll"><button class="preset-chip add-chip" onclick="savePresetModal()">+ Save Current</button></div></div>
-  <button class="primary-btn" onclick="startWorkout()" style="margin-top:auto;">START WORKOUT</button>
+  <!-- Setup Now Playing -->
+  <div class="now-playing" id="setup-now-playing" style="margin-top:auto;margin-bottom:12px;">
+    <div class="np-track-row">
+      <div class="np-art"><img id="setup-np-art-img" src="" alt="" style="display:none"/></div>
+      <div class="np-info">
+        <div class="np-track" id="setup-np-track">Not playing</div>
+        <div class="np-artist" id="setup-np-artist">—</div>
+      </div>
+    </div>
+    <div class="np-controls-row">
+      <button class="np-side-btn" onclick="spotifyPrev()"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
+      <button class="np-play-btn" id="setup-np-play-pause" onclick="spotifyPlayPause()">
+        <svg id="setup-np-play-icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="setup-np-pause-icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+      </button>
+      <button class="np-side-btn" onclick="spotifyNext()"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
+    </div>
+  </div>
+  <button class="primary-btn" onclick="startWorkout()">START WORKOUT</button>
 </div>
 
 <!-- ══════════ TIMER ══════════ -->
@@ -1009,13 +1027,46 @@ async function finishSpConnect(){sp.connected=true;document.getElementById('spot
 
 window.spotifyDisconnect=()=>{['sp_a','sp_r','sp_e'].forEach(k=>localStorage.removeItem(k));sp.accessToken=sp.refreshToken=null;sp.connected=false;if(sp.player){sp.player.disconnect();sp.player=null;}clearInterval(sp.pollTimer);document.getElementById('spotify-connect-wrap').style.display='block';document.getElementById('spotify-status').classList.remove('visible');document.getElementById('spotify-card').classList.remove('connected');document.getElementById('now-playing').classList.remove('visible');};
 
-function updateNowPlaying(item,playing){if(!item)return;document.getElementById('now-playing').classList.add('visible');document.getElementById('np-track').textContent=item.name||'—';document.getElementById('np-artist').textContent=(item.artists||[]).map(a=>a.name).join(', ')||'—';const img=document.getElementById('np-art-img');const art=item.album?.images?.[0];if(art){img.src=art.url;img.style.display='block';}document.getElementById('np-play-icon').style.display=playing?'none':'block';document.getElementById('np-pause-icon').style.display=playing?'block':'none';sp.isPlaying=playing;}
+function updateNowPlaying(item,playing){
+  if(!item)return;
+  const name=item.name||'—';
+  const artist=(item.artists||[]).map(a=>a.name).join(', ')||'—';
+  const art=item.album?.images?.[0];
+  // Timer screen
+  document.getElementById('now-playing').classList.add('visible');
+  document.getElementById('np-track').textContent=name;
+  document.getElementById('np-artist').textContent=artist;
+  const img=document.getElementById('np-art-img');
+  if(art){img.src=art.url;img.style.display='block';}
+  document.getElementById('np-play-icon').style.display=playing?'none':'block';
+  document.getElementById('np-pause-icon').style.display=playing?'block':'none';
+  // Setup screen
+  document.getElementById('setup-now-playing').classList.add('visible');
+  document.getElementById('setup-np-track').textContent=name;
+  document.getElementById('setup-np-artist').textContent=artist;
+  const img2=document.getElementById('setup-np-art-img');
+  if(art){img2.src=art.url;img2.style.display='block';}
+  document.getElementById('setup-np-play-icon').style.display=playing?'none':'block';
+  document.getElementById('setup-np-pause-icon').style.display=playing?'block':'none';
+  sp.isPlaying=playing;
+}
 
 function loadSpSDK(){if(window.Spotify){createSpPlayer();return;}window.onSpotifyWebPlaybackSDKReady=createSpPlayer;if(!document.getElementById('sp-sdk')){const s=document.createElement('script');s.id='sp-sdk';s.src='https://sdk.scdn.co/spotify-player.js';document.head.appendChild(s);}}
 
 function createSpPlayer(){sp.player=new Spotify.Player({name:'Interval Runner',getOAuthToken:async cb=>{await ensureSpToken();cb(sp.accessToken);},volume:0.8});sp.player.addListener('ready',({device_id})=>{sp.deviceId=device_id;spAPI('/me/player','PUT',{device_ids:[device_id],play:false});});sp.player.addListener('player_state_changed',s=>{if(!s)return;updateNowPlaying(s.track_window.current_track,!s.paused);});sp.player.connect();sp.pollTimer=setInterval(async()=>{if(!sp.connected)return;const d=await spAPI('/me/player');if(d?.item)updateNowPlaying(d.item,d.is_playing);},4000);}
 
-window.spotifyPlayPause=async()=>{if(!sp.connected)return;if(sp.isPlaying)await spAPI('/me/player/pause','PUT');else await spAPI('/me/player/play','PUT');sp.isPlaying=!sp.isPlaying;document.getElementById('np-play-icon').style.display=sp.isPlaying?'none':'block';document.getElementById('np-pause-icon').style.display=sp.isPlaying?'block':'none';};
+window.spotifyPlayPause=async()=>{
+  if(!sp.connected)return;
+  if(sp.isPlaying)await spAPI('/me/player/pause','PUT');
+  else await spAPI('/me/player/play','PUT');
+  sp.isPlaying=!sp.isPlaying;
+  // Sync both players
+  const playing=sp.isPlaying;
+  document.getElementById('np-play-icon').style.display=playing?'none':'block';
+  document.getElementById('np-pause-icon').style.display=playing?'block':'none';
+  document.getElementById('setup-np-play-icon').style.display=playing?'none':'block';
+  document.getElementById('setup-np-pause-icon').style.display=playing?'block':'none';
+};
 window.spotifyNext=()=>sp.connected&&spAPI('/me/player/next','POST');
 window.spotifyPrev=()=>sp.connected&&spAPI('/me/player/previous','POST');
 async function duck(){if(sp.player)await sp.player.setVolume(0.12);}
