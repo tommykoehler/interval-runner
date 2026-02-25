@@ -150,6 +150,25 @@
   .upload-bar { height: 100%; background: var(--run); border-radius: 2px; transition: width 0.3s; width: 0%; }
 
   /* ── CROP MODAL ── */
+  /* ── DRUM PICKER ── */
+  .drum-col {
+    flex: 1; height: 220px; overflow: hidden; position: relative;
+    cursor: grab; z-index: 1; user-select: none;
+  }
+  .drum-col:active { cursor: grabbing; }
+  .drum-inner {
+    display: flex; flex-direction: column; align-items: center;
+    transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: transform;
+  }
+  .drum-item {
+    height: 44px; display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 1px;
+    color: var(--muted); transition: color 0.15s, font-size 0.15s; flex-shrink: 0;
+    width: 100%;
+  }
+  .drum-item.selected { color: var(--text); font-size: 36px; }
+
   .crop-overlay { position: fixed; inset: 0; background: #000; display: none; flex-direction: column; z-index: 300; }
   .crop-overlay.open { display: flex; }
   .crop-header { display: flex; align-items: center; justify-content: space-between; padding: 56px 20px 16px; flex-shrink: 0; }
@@ -457,25 +476,34 @@
     <button class="crop-btn confirm" onclick="confirmCrop()">Use Photo</button>
   </div>
 </div>
-<!-- ══════════ TIME INPUT MODAL ══════════ -->
+<!-- ══════════ TIME PICKER MODAL ══════════ -->
 <div class="modal-overlay" id="time-input-modal">
-  <div class="modal">
-    <div class="modal-title" id="time-input-title">SET RUN TIME</div>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Enter time in minutes and seconds</p>
-    <div style="display:flex;gap:12px;align-items:center;">
-      <div style="flex:1;">
-        <div style="font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Minutes</div>
-        <input type="number" id="time-input-min" min="0" max="59" placeholder="0" inputmode="numeric" pattern="[0-9]*" style="text-align:center;font-size:28px;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;"/>
-      </div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;padding-top:18px;">:</div>
-      <div style="flex:1;">
-        <div style="font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Seconds</div>
-        <input type="number" id="time-input-sec" min="0" max="59" placeholder="0" inputmode="numeric" pattern="[0-9]*" style="text-align:center;font-size:28px;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;"/>
-      </div>
+  <div class="modal" style="padding-bottom:32px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <button class="modal-btn cancel" onclick="closeTimeInput()" style="flex:none;width:auto;padding:10px 20px;font-size:14px;">Cancel</button>
+      <div class="modal-title" id="time-input-title" style="margin:0;font-size:20px;">SET RUN TIME</div>
+      <button class="modal-btn confirm" onclick="confirmTimeInput()" style="flex:none;width:auto;padding:10px 20px;font-size:14px;">Set</button>
     </div>
-    <div class="modal-actions">
-      <button class="modal-btn cancel" onclick="closeTimeInput()">Cancel</button>
-      <button class="modal-btn confirm" onclick="confirmTimeInput()">Set Time</button>
+
+    <!-- Column labels -->
+    <div style="display:flex;justify-content:center;gap:0;margin-bottom:8px;">
+      <div style="flex:1;text-align:center;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);">MIN</div>
+      <div style="width:24px;"></div>
+      <div style="flex:1;text-align:center;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);">SEC</div>
+    </div>
+
+    <!-- Picker -->
+    <div style="display:flex;align-items:center;justify-content:center;gap:0;position:relative;">
+      <!-- Selection highlight -->
+      <div style="position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);height:44px;background:var(--surface2);border-radius:12px;pointer-events:none;z-index:0;"></div>
+      <!-- Top fade -->
+      <div style="position:absolute;left:0;right:0;top:0;height:66px;background:linear-gradient(to bottom,var(--surface),transparent);pointer-events:none;z-index:2;border-radius:8px;"></div>
+      <!-- Bottom fade -->
+      <div style="position:absolute;left:0;right:0;bottom:0;height:66px;background:linear-gradient(to top,var(--surface),transparent);pointer-events:none;z-index:2;border-radius:8px;"></div>
+
+      <div class="drum-col" id="drum-min"></div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;width:24px;text-align:center;position:relative;z-index:1;">:</div>
+      <div class="drum-col" id="drum-sec"></div>
     </div>
   </div>
 </div>
@@ -1009,26 +1037,145 @@ function getTimeSec(p){return parseInt(document.getElementById(p+'-min').textCon
 function setTimeDisplay(p,s){s=Math.max(5,s);document.getElementById(p+'-min').textContent=pad(Math.floor(s/60));document.getElementById(p+'-sec').textContent=pad(s%60);}
 window.adjust=(p,d)=>setTimeDisplay(p,getTimeSec(p)+d);
 
-// ── TAP TO TYPE TIME ──
+// ── DRUM ROLL TIME PICKER ──
 let _timeInputPrefix = null;
+const ITEM_H = 44;
+const PADDING = 3; // visible items above/below center
+
+function buildDrumCol(elId, count, initialVal) {
+  const col = document.getElementById(elId);
+  const inner = document.createElement('div');
+  inner.className = 'drum-inner';
+  inner.id = elId + '-inner';
+
+  // Pad top and bottom so selection can reach first/last item
+  for(let i = 0; i < PADDING; i++) {
+    const spacer = document.createElement('div');
+    spacer.className = 'drum-item';
+    inner.appendChild(spacer);
+  }
+  for(let i = 0; i < count; i++) {
+    const item = document.createElement('div');
+    item.className = 'drum-item' + (i === initialVal ? ' selected' : '');
+    item.textContent = String(i).padStart(2, '0');
+    inner.appendChild(item);
+  }
+  for(let i = 0; i < PADDING; i++) {
+    const spacer = document.createElement('div');
+    spacer.className = 'drum-item';
+    inner.appendChild(spacer);
+  }
+
+  col.innerHTML = '';
+  col.appendChild(inner);
+
+  // Set initial position
+  inner.style.transition = 'none';
+  inner.style.transform = `translateY(${-initialVal * ITEM_H}px)`;
+
+  attachDrumEvents(col, inner, count);
+  return inner;
+}
+
+function snapDrum(inner, count) {
+  const raw = getCurrentDrumVal(inner);
+  const snapped = Math.max(0, Math.min(count - 1, Math.round(raw)));
+  inner.style.transition = 'transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+  inner.style.transform = `translateY(${-snapped * ITEM_H}px)`;
+  updateDrumHighlight(inner, snapped);
+  return snapped;
+}
+
+function getCurrentDrumVal(inner) {
+  const t = new DOMMatrix(getComputedStyle(inner).transform).m42;
+  return -t / ITEM_H;
+}
+
+function updateDrumHighlight(inner, val) {
+  inner.querySelectorAll('.drum-item').forEach((el, i) => {
+    const itemVal = i - PADDING;
+    el.classList.toggle('selected', itemVal === val);
+  });
+}
+
+function attachDrumEvents(col, inner, count) {
+  let startY = 0, startTranslate = 0, lastY = 0, velocity = 0, lastTime = 0, animFrame = null;
+
+  function getTranslate() {
+    return new DOMMatrix(getComputedStyle(inner).transform).m42;
+  }
+
+  function onStart(y) {
+    cancelAnimationFrame(animFrame);
+    inner.style.transition = 'none';
+    startY = y;
+    startTranslate = getTranslate();
+    lastY = y; lastTime = Date.now(); velocity = 0;
+  }
+
+  function onMove(y) {
+    const dy = y - startY;
+    let next = startTranslate + dy;
+    const minT = -(count - 1) * ITEM_H;
+    next = Math.max(minT - 40, Math.min(40, next)); // slight overscroll
+    inner.style.transform = `translateY(${next}px)`;
+    const now = Date.now();
+    velocity = (y - lastY) / (now - lastTime + 1);
+    lastY = y; lastTime = now;
+    updateDrumHighlight(inner, Math.round(-next / ITEM_H));
+  }
+
+  function onEnd() {
+    // Momentum
+    let current = getTranslate();
+    let momentum = velocity * 80;
+    let target = current + momentum;
+    let snapped = Math.max(0, Math.min(count - 1, Math.round(-target / ITEM_H)));
+    inner.style.transition = 'transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+    inner.style.transform = `translateY(${-snapped * ITEM_H}px)`;
+    updateDrumHighlight(inner, snapped);
+  }
+
+  // Touch
+  col.addEventListener('touchstart', e => { onStart(e.touches[0].clientY); }, {passive:true});
+  col.addEventListener('touchmove', e => { e.preventDefault(); onMove(e.touches[0].clientY); }, {passive:false});
+  col.addEventListener('touchend', onEnd);
+
+  // Mouse (desktop)
+  col.addEventListener('mousedown', e => { onStart(e.clientY); col._dragging = true; });
+  window.addEventListener('mousemove', e => { if(col._dragging) onMove(e.clientY); });
+  window.addEventListener('mouseup', () => { if(col._dragging) { col._dragging = false; onEnd(); } });
+}
+
+function getDrumVal(elId) {
+  const inner = document.getElementById(elId + '-inner');
+  const t = new DOMMatrix(getComputedStyle(inner).transform).m42;
+  return Math.max(0, Math.round(-t / ITEM_H));
+}
+
 window.openTimeInput = (prefix) => {
   _timeInputPrefix = prefix;
   const total = getTimeSec(prefix);
-  document.getElementById('time-input-min').value = Math.floor(total/60) || '';
-  document.getElementById('time-input-sec').value = total%60 || '';
-  document.getElementById('time-input-title').textContent = prefix==='run' ? 'SET RUN TIME' : 'SET WALK TIME';
+  const mins = Math.floor(total / 60);
+  const secs = total % 60;
+  document.getElementById('time-input-title').textContent = prefix === 'run' ? 'SET RUN TIME' : 'SET WALK TIME';
   document.getElementById('time-input-modal').classList.add('open');
-  setTimeout(() => document.getElementById('time-input-min').focus(), 100);
+  setTimeout(() => {
+    buildDrumCol('drum-min', 60, mins);
+    buildDrumCol('drum-sec', 60, secs);
+  }, 50);
 };
+
 window.closeTimeInput = () => {
   document.getElementById('time-input-modal').classList.remove('open');
   _timeInputPrefix = null;
 };
+
 window.confirmTimeInput = () => {
   if(!_timeInputPrefix) return;
-  const mins = parseInt(document.getElementById('time-input-min').value) || 0;
-  const secs = parseInt(document.getElementById('time-input-sec').value) || 0;
-  const total = (mins*60) + secs;
+  const mins = getDrumVal('drum-min');
+  const secs = getDrumVal('drum-sec');
+  const total = mins * 60 + secs;
   if(total < 5) { alert('Minimum time is 5 seconds.'); return; }
   setTimeDisplay(_timeInputPrefix, total);
   closeTimeInput();
