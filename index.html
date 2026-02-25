@@ -773,7 +773,7 @@ async function loadUserData(uid) {
       const d = snap.data();
       window._extraProfileData = d;
       if(currentUser) updateProfileView(currentUser, d);
-      if(d.defaultPreset) applyPreset(d.defaultPreset);
+      if(d.defaultPreset) { const def = (window._presets||[]).find(p=>p.isDefault); if(def) window._selectedPresetId = def.id; applyPreset(d.defaultPreset); }
     }
     await loadPresets(uid);
   } catch(e) { console.warn('loadUserData', e); }
@@ -917,11 +917,14 @@ async function loadPresets(uid) {
     const snap = await getDocs(collection(db, 'users', uid, 'presets'));
     window._presets = [];
     snap.forEach(d => window._presets.push({ id: d.id, ...d.data() }));
+    // Auto-select default
+    const defPreset = window._presets.find(p => p.isDefault);
+    if(defPreset && !window._selectedPresetId) window._selectedPresetId = defPreset.id;
     renderPresets();
   } catch(e) { console.warn('loadPresets', e); }
 }
 
-function applyPreset(p) {
+window.applyPreset = function applyPreset(p) {
   setTimeDisplay('run', p.runSec || 60);
   setTimeDisplay('walk', p.walkSec || 30);
   if(p.mode) setMode(p.mode);
@@ -936,9 +939,10 @@ function renderPresets() {
   scroll.innerHTML = `<button class="preset-chip add-chip" onclick="savePresetModal()">+ Save Current</button>`;
   presets.forEach(p => {
     const chip = document.createElement('button');
-    chip.className = 'preset-chip' + (p.isDefault ? ' active' : '');
+    const isSelected = window._selectedPresetId === p.id;
+    chip.className = 'preset-chip' + (isSelected ? ' active' : '');
     chip.textContent = p.name + (p.isDefault ? ' ★' : '');
-    chip.onclick = () => applyPreset(p);
+    chip.onclick = () => { window._selectedPresetId = p.id; applyPreset(p); renderPresets(); };
     scroll.appendChild(chip);
   });
   if(presets.length === 0) { list.innerHTML = `<p style="color:var(--muted);font-size:13px;">No presets saved yet.</p>`; return; }
@@ -1246,7 +1250,7 @@ window.confirmTimeInput = () => {
 };
 window.adjustVal=(id,d)=>{const el=document.getElementById(id+'-val');el.textContent=Math.max(1,parseInt(el.textContent)+d);};
 window.setMode=(m)=>{window._mode=m;document.getElementById('mode-rounds').classList.toggle('active',m==='rounds');document.getElementById('mode-time').classList.toggle('active',m==='time');document.getElementById('rounds-input').style.display=m==='rounds'?'block':'none';document.getElementById('totaltime-input').style.display=m==='time'?'block':'none';};
-window._mode='rounds'; window._presets=[];
+window._mode='rounds'; if(!window._presets) window._presets=[];
 
 // ── TIMER ──
 const T={runSec:0,walkSec:0,phase:'run',round:1,maxRounds:0,phaseLeft:0,totalLeft:0,paused:false,timer:null,elapsed:0,runAccum:0,walkAccum:0};
