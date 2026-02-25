@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Interval Runner</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
     --run: #FF4D2E;
@@ -12,6 +12,7 @@
     --bg: #0D0D0D;
     --surface: #1A1A1A;
     --surface2: #242424;
+    --surface3: #2E2E2E;
     --text: #F5F5F0;
     --muted: #888;
     --spotify: #1DB954;
@@ -21,40 +22,24 @@
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
   body {
-    background: var(--bg);
-    color: var(--text);
+    background: var(--bg); color: var(--text);
     font-family: 'DM Sans', sans-serif;
-    min-height: 100dvh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    overflow-x: hidden;
+    min-height: 100dvh; display: flex; flex-direction: column;
+    align-items: center; overflow-x: hidden;
   }
 
-  .screen { width: 100%; max-width: 430px; min-height: 100dvh; padding: 0 20px 40px; display: none; flex-direction: column; }
+  .screen {
+    width: 100%; max-width: 430px; min-height: 100dvh;
+    padding: 0 20px 40px; display: none; flex-direction: column;
+  }
   .screen.active { display: flex; }
 
-  /* ── SETUP ── */
-  #setup { padding-top: 60px; }
-
-  .app-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 48px; letter-spacing: 3px; line-height: 1; margin-bottom: 4px;
-  }
-  .app-subtitle { color: var(--muted); font-size: 14px; font-weight: 300; margin-bottom: 32px; }
-
+  /* ── SHARED ── */
   .section-label {
     font-size: 11px; font-weight: 500; letter-spacing: 2px;
     text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
   }
-
   .card { background: var(--surface); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
-
-  .time-input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .time-input-group { display: flex; flex-direction: column; gap: 8px; }
-  .time-input-group label { font-size: 12px; color: var(--muted); font-weight: 500; }
-  .has-accent { color: var(--run) !important; }
-  .has-accent-walk { color: var(--walk) !important; }
 
   .time-picker {
     display: flex; align-items: center; background: var(--surface2);
@@ -63,7 +48,7 @@
   .time-picker button {
     background: none; border: none; color: var(--text); font-size: 22px;
     width: 44px; height: 100%; cursor: pointer; display: flex;
-    align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.15s;
+    align-items: center; justify-content: center; transition: background 0.15s;
   }
   .time-picker button:active { background: rgba(255,255,255,0.08); }
   .time-picker .time-val {
@@ -71,15 +56,114 @@
     font-size: 28px; letter-spacing: 1px; user-select: none;
   }
 
-  .duration-mode { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
-  .mode-btn {
+  .pill-btn {
     background: var(--surface2); border: 2px solid transparent; border-radius: 12px;
     color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 13px;
     font-weight: 500; padding: 12px; cursor: pointer; transition: all 0.2s; text-align: center;
   }
-  .mode-btn.active { border-color: var(--run); color: var(--text); background: rgba(255,77,46,0.1); }
+  .pill-btn.active { border-color: var(--run); color: var(--text); background: rgba(255,77,46,0.1); }
 
-  /* ── SPOTIFY ── */
+  .primary-btn {
+    width: 100%; padding: 20px; background: var(--run); border: none;
+    border-radius: var(--radius); color: white; font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px; letter-spacing: 3px; cursor: pointer;
+    transition: transform 0.1s, opacity 0.1s;
+  }
+  .primary-btn:active { transform: scale(0.97); opacity: 0.9; }
+  .primary-btn.secondary { background: var(--surface2); color: var(--text); font-size: 16px; letter-spacing: 1px; }
+
+  .icon-btn {
+    background: var(--surface); border: none; color: var(--text);
+    border-radius: 12px; width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; cursor: pointer; transition: background 0.15s;
+  }
+  .icon-btn:active { background: var(--surface2); }
+
+  input[type="email"], input[type="password"], input[type="text"], input[type="tel"] {
+    width: 100%; padding: 16px; background: var(--surface2); border: 2px solid transparent;
+    border-radius: 14px; color: var(--text); font-family: 'DM Sans', sans-serif;
+    font-size: 15px; outline: none; transition: border-color 0.2s; margin-bottom: 12px;
+  }
+  input:focus { border-color: var(--run); }
+  input::placeholder { color: var(--muted); }
+
+  .divider {
+    display: flex; align-items: center; gap: 12px; margin: 16px 0; color: var(--muted); font-size: 13px;
+  }
+  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--surface2); }
+
+  .social-btn {
+    width: 100%; padding: 16px; background: var(--surface2); border: none;
+    border-radius: 14px; color: var(--text); font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 500; cursor: pointer; display: flex;
+    align-items: center; justify-content: center; gap: 10px;
+    margin-bottom: 12px; transition: background 0.15s;
+  }
+  .social-btn:active { background: var(--surface3); }
+
+  .text-link {
+    background: none; border: none; color: var(--muted); font-family: 'DM Sans', sans-serif;
+    font-size: 13px; cursor: pointer; text-decoration: underline; padding: 0;
+  }
+  .text-link:hover { color: var(--text); }
+
+  .error-msg { color: var(--run); font-size: 13px; margin-bottom: 12px; display: none; }
+  .success-msg { color: var(--walk); font-size: 13px; margin-bottom: 12px; display: none; }
+
+  /* ── AUTH SCREEN ── */
+  #auth { padding-top: 80px; }
+  .auth-title {
+    font-family: 'Bebas Neue', sans-serif; font-size: 52px;
+    letter-spacing: 3px; line-height: 1; margin-bottom: 4px;
+  }
+  .auth-subtitle { color: var(--muted); font-size: 14px; font-weight: 300; margin-bottom: 40px; }
+
+  .auth-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 24px; }
+
+  /* ── SETUP SCREEN ── */
+  #setup { padding-top: 0; }
+
+  .setup-header {
+    display: flex; align-items: center; justify-content: space-between; padding: 56px 0 24px;
+  }
+  .app-title {
+    font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 2px; line-height: 1;
+  }
+  .header-actions { display: flex; gap: 8px; }
+
+  .avatar-btn {
+    width: 44px; height: 44px; border-radius: 50%; background: var(--surface);
+    border: none; cursor: pointer; overflow: hidden; display: flex;
+    align-items: center; justify-content: center; font-size: 18px;
+  }
+  .avatar-btn img { width: 100%; height: 100%; object-fit: cover; }
+
+  .time-input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .time-input-group { display: flex; flex-direction: column; gap: 8px; }
+  .time-input-group label { font-size: 12px; color: var(--muted); font-weight: 500; }
+  .has-accent { color: var(--run) !important; }
+  .has-accent-walk { color: var(--walk) !important; }
+
+  .duration-mode { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+
+  /* Presets */
+  .presets-scroll {
+    display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 0;
+    scrollbar-width: none;
+  }
+  .presets-scroll::-webkit-scrollbar { display: none; }
+
+  .preset-chip {
+    flex-shrink: 0; padding: 8px 16px; background: var(--surface2);
+    border: 2px solid transparent; border-radius: 50px; color: var(--muted);
+    font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .preset-chip.active { border-color: var(--run); color: var(--text); background: rgba(255,77,46,0.1); }
+  .preset-chip.add-chip { color: var(--run); border-color: rgba(255,77,46,0.3); }
+
+  /* Spotify */
   .spotify-card {
     background: var(--surface); border-radius: var(--radius); padding: 20px;
     margin-bottom: 16px; border: 1px solid transparent; transition: border-color 0.3s;
@@ -90,49 +174,25 @@
     width: 100%; padding: 16px; background: var(--spotify); border: none;
     border-radius: 14px; color: #000; font-family: 'DM Sans', sans-serif;
     font-size: 15px; font-weight: 600; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    gap: 10px; transition: opacity 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
   }
-  .spotify-connect-btn:active { opacity: 0.85; }
 
   .spotify-status { display: none; align-items: center; gap: 12px; }
   .spotify-status.visible { display: flex; }
-
-  .spotify-avatar {
-    width: 42px; height: 42px; border-radius: 50%; background: var(--surface2);
-    overflow: hidden; flex-shrink: 0; display: flex; align-items: center;
-    justify-content: center; font-size: 18px;
+  .spotify-avatar-sm {
+    width: 36px; height: 36px; border-radius: 50%; background: var(--surface2);
+    overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
   }
-  .spotify-avatar img { width: 100%; height: 100%; object-fit: cover; }
-
+  .spotify-avatar-sm img { width: 100%; height: 100%; object-fit: cover; }
   .spotify-info { flex: 1; min-width: 0; }
-  .spotify-name { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .spotify-connected-label { font-size: 11px; color: var(--spotify); margin-top: 2px; }
+  .spotify-name { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .spotify-connected-label { font-size: 11px; color: var(--spotify); }
+  .spotify-disconnect { background: none; border: none; color: var(--muted); font-size: 12px; cursor: pointer; }
 
-  .spotify-disconnect {
-    background: none; border: none; color: var(--muted);
-    font-size: 12px; cursor: pointer; padding: 4px 8px; border-radius: 8px;
-  }
-
-  .start-btn {
-    width: 100%; padding: 20px; background: var(--run); border: none;
-    border-radius: var(--radius); color: white; font-family: 'Bebas Neue', sans-serif;
-    font-size: 24px; letter-spacing: 3px; cursor: pointer; margin-top: auto;
-    transition: transform 0.1s, opacity 0.1s;
-  }
-  .start-btn:active { transform: scale(0.97); opacity: 0.9; }
-
-  /* ── TIMER ── */
+  /* ── TIMER SCREEN ── */
   #timer { padding-top: 0; justify-content: space-between; }
 
-  .timer-header {
-    display: flex; align-items: center; justify-content: space-between; padding: 56px 0 16px;
-  }
-  .back-btn {
-    background: var(--surface); border: none; color: var(--text); border-radius: 12px;
-    width: 44px; height: 44px; display: flex; align-items: center;
-    justify-content: center; font-size: 20px; cursor: pointer;
-  }
+  .timer-header { display: flex; align-items: center; justify-content: space-between; padding: 56px 0 16px; }
   .round-badge { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 2px; color: var(--muted); }
 
   .ring-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1; justify-content: center; }
@@ -148,30 +208,43 @@
   .next-label { font-size: 12px; color: var(--muted); margin-top: 4px; }
   .total-remaining { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 2px; color: var(--muted); }
 
-  /* ── NOW PLAYING ── */
+  /* ── NOW PLAYING (improved) ── */
   .now-playing {
-    background: var(--surface); border-radius: 18px; padding: 12px 16px;
-    display: none; align-items: center; gap: 12px; margin: 8px 0; width: 100%;
+    background: var(--surface); border-radius: 18px; padding: 14px 16px;
+    display: none; flex-direction: column; gap: 10px; margin: 8px 0; width: 100%;
   }
   .now-playing.visible { display: flex; }
 
-  .np-art { width: 44px; height: 44px; border-radius: 8px; background: var(--surface2); flex-shrink: 0; overflow: hidden; }
-  .np-art img { width: 100%; height: 100%; object-fit: cover; }
-
-  .np-info { flex: 1; min-width: 0; }
-  .np-track { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .np-artist { font-size: 11px; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-  .np-controls { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-  .np-btn {
-    background: none; border: none; color: var(--text); font-size: 18px; cursor: pointer;
-    width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
-    border-radius: 50%; transition: background 0.15s;
+  .np-track-row { display: flex; align-items: center; gap: 12px; }
+  .np-art {
+    width: 46px; height: 46px; border-radius: 10px; background: var(--surface2);
+    flex-shrink: 0; overflow: hidden; position: relative;
   }
-  .np-btn:active { background: rgba(255,255,255,0.1); }
-  .np-btn.play-pause { background: var(--spotify); color: #000; font-size: 16px; }
+  .np-art img { width: 100%; height: 100%; object-fit: cover; }
+  .np-info { flex: 1; min-width: 0; }
+  .np-track { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .np-artist { font-size: 12px; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-  /* ── CONTROLS ── */
+  .np-controls-row {
+    display: flex; align-items: center; justify-content: space-between; padding: 0 4px;
+  }
+
+  .np-side-btn {
+    background: none; border: none; color: var(--muted); cursor: pointer;
+    width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; transition: color 0.15s, background 0.15s; font-size: 22px;
+  }
+  .np-side-btn:active { background: rgba(255,255,255,0.06); color: var(--text); }
+
+  .np-play-btn {
+    width: 52px; height: 52px; border-radius: 50%; background: var(--spotify);
+    border: none; color: #000; font-size: 20px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.1s, opacity 0.15s; flex-shrink: 0;
+  }
+  .np-play-btn:active { transform: scale(0.93); opacity: 0.85; }
+
+  /* ── TIMER CONTROLS ── */
   .controls { display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 12px; padding-bottom: 20px; }
   .ctrl-btn {
     height: 68px; border: none; border-radius: 18px; cursor: pointer;
@@ -185,7 +258,66 @@
     font-size: 22px; letter-spacing: 2px; color: white;
   }
 
-  /* ── DONE ── */
+  /* ── PROFILE SCREEN ── */
+  #profile { padding-top: 0; }
+
+  .profile-header { display: flex; align-items: center; justify-content: space-between; padding: 56px 0 24px; }
+  .profile-header-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 2px; }
+
+  .profile-avatar-wrap { display: flex; flex-direction: column; align-items: center; padding: 24px 0 32px; }
+  .profile-avatar-large {
+    width: 80px; height: 80px; border-radius: 50%; background: var(--surface2);
+    overflow: hidden; display: flex; align-items: center; justify-content: center;
+    font-size: 32px; margin-bottom: 12px;
+  }
+  .profile-avatar-large img { width: 100%; height: 100%; object-fit: cover; }
+  .profile-display-name { font-size: 18px; font-weight: 600; }
+  .profile-email { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+  .preset-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .preset-item {
+    background: var(--surface2); border-radius: 14px; padding: 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .preset-item-info { flex: 1; }
+  .preset-item-name { font-size: 14px; font-weight: 600; }
+  .preset-item-details { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .preset-item-actions { display: flex; gap: 8px; }
+  .preset-action-btn {
+    background: none; border: none; color: var(--muted); cursor: pointer;
+    font-size: 16px; padding: 4px; border-radius: 8px; transition: color 0.15s;
+  }
+  .preset-action-btn:hover { color: var(--text); }
+  .preset-action-btn.delete:hover { color: var(--run); }
+
+  .default-badge {
+    font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--run); background: rgba(255,77,46,0.1); padding: 3px 8px; border-radius: 20px;
+  }
+
+  /* ── SAVE PRESET MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+    display: none; align-items: flex-end; justify-content: center; z-index: 100;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface); border-radius: 24px 24px 0 0; padding: 24px 20px 40px;
+    width: 100%; max-width: 430px;
+  }
+  .modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 2px; margin-bottom: 16px; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 16px; }
+  .modal-btn {
+    flex: 1; padding: 16px; border: none; border-radius: 14px; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+    transition: opacity 0.15s;
+  }
+  .modal-btn:active { opacity: 0.8; }
+  .modal-btn.confirm { background: var(--run); color: white; }
+  .modal-btn.cancel { background: var(--surface2); color: var(--text); }
+
+  /* ── DONE SCREEN ── */
   #done { padding-top: 60px; align-items: center; text-align: center; }
   .done-icon { font-size: 72px; margin-bottom: 20px; }
   .done-title { font-family: 'Bebas Neue', sans-serif; font-size: 52px; letter-spacing: 3px; margin-bottom: 8px; }
@@ -193,24 +325,94 @@
   .stat-card { background: var(--surface); border-radius: var(--radius); padding: 20px; }
   .stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 40px; letter-spacing: 1px; }
   .stat-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .again-btn {
-    width: 100%; padding: 20px; background: var(--run); border: none;
-    border-radius: var(--radius); color: white; font-family: 'Bebas Neue', sans-serif;
-    font-size: 24px; letter-spacing: 3px; cursor: pointer; margin-top: auto;
-  }
+  .done-actions { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: auto; }
 
-  @keyframes phasePulse {
-    0%{transform:scale(1)} 50%{transform:scale(1.04)} 100%{transform:scale(1)}
+  /* ── LOADING ── */
+  #loading {
+    position: fixed; inset: 0; background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 16px; z-index: 200;
   }
+  .loading-title { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 3px; }
+  .spinner {
+    width: 32px; height: 32px; border: 3px solid var(--surface2);
+    border-top-color: var(--run); border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @keyframes phasePulse { 0%{transform:scale(1)} 50%{transform:scale(1.04)} 100%{transform:scale(1)} }
   .pulse { animation: phasePulse 0.4s ease; }
 </style>
 </head>
 <body>
 
+<!-- ── LOADING ── -->
+<div id="loading">
+  <div class="loading-title">INTERVAL RUNNER</div>
+  <div class="spinner"></div>
+</div>
+
+<!-- ══════════ AUTH ══════════ -->
+<div class="screen" id="auth">
+  <div class="auth-title">INTERVAL<br>RUNNER</div>
+  <div class="auth-subtitle">Set your pace. Run with purpose.</div>
+
+  <div class="auth-tabs">
+    <button class="pill-btn active" id="tab-login" onclick="switchAuthTab('login')">Sign In</button>
+    <button class="pill-btn" id="tab-signup" onclick="switchAuthTab('signup')">Sign Up</button>
+  </div>
+
+  <!-- Social -->
+  <button class="social-btn" onclick="signInGoogle()">
+    <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+    Continue with Google
+  </button>
+  <button class="social-btn" onclick="signInApple()">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+    Continue with Apple
+  </button>
+
+  <div class="divider">or</div>
+
+  <!-- Email form -->
+  <div id="email-form">
+    <div id="auth-error" class="error-msg"></div>
+    <div id="auth-success" class="success-msg"></div>
+    <input type="email" id="auth-email" placeholder="Email address"/>
+    <div id="password-field">
+      <input type="password" id="auth-password" placeholder="Password"/>
+    </div>
+    <button class="primary-btn" id="auth-submit-btn" onclick="handleEmailAuth()">SIGN IN</button>
+    <div style="text-align:center;margin-top:16px;">
+      <button class="text-link" id="magic-link-btn" onclick="sendMagicLink()">Send magic link instead</button>
+    </div>
+    <div style="text-align:center;margin-top:12px;" id="forgot-wrap">
+      <button class="text-link" onclick="sendPasswordReset()">Forgot password?</button>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:24px;">
+    <button class="text-link" onclick="skipAuth()">Skip for now →</button>
+  </div>
+</div>
+
 <!-- ══════════ SETUP ══════════ -->
-<div class="screen active" id="setup">
-  <div class="app-title">INTERVAL<br>RUNNER</div>
-  <div class="app-subtitle">Set your pace. Run with purpose.</div>
+<div class="screen" id="setup">
+  <div class="setup-header">
+    <div class="app-title">INTERVAL<br>RUNNER</div>
+    <div class="header-actions">
+      <button class="avatar-btn" id="avatar-btn" onclick="showScreen('profile')">👤</button>
+    </div>
+  </div>
+
+  <!-- Presets -->
+  <div class="section-label">Presets</div>
+  <div style="margin-bottom:16px;">
+    <div class="presets-scroll" id="presets-scroll">
+      <button class="preset-chip add-chip" onclick="savePresetModal()">+ Save Current</button>
+    </div>
+  </div>
 
   <div class="section-label">Interval Timing</div>
   <div class="card">
@@ -223,8 +425,8 @@
           <button onclick="adjust('run',60)">+</button>
         </div>
         <div style="display:flex;gap:6px;margin-top:4px;">
-          <button class="mode-btn" onclick="adjust('run',30)" style="padding:6px;font-size:11px;flex:1">+30s</button>
-          <button class="mode-btn" onclick="adjust('run',-30)" style="padding:6px;font-size:11px;flex:1">−30s</button>
+          <button class="pill-btn" onclick="adjust('run',30)" style="padding:6px;font-size:11px;flex:1">+30s</button>
+          <button class="pill-btn" onclick="adjust('run',-30)" style="padding:6px;font-size:11px;flex:1">−30s</button>
         </div>
       </div>
       <div class="time-input-group">
@@ -235,8 +437,8 @@
           <button onclick="adjust('walk',60)">+</button>
         </div>
         <div style="display:flex;gap:6px;margin-top:4px;">
-          <button class="mode-btn" onclick="adjust('walk',30)" style="padding:6px;font-size:11px;flex:1">+30s</button>
-          <button class="mode-btn" onclick="adjust('walk',-30)" style="padding:6px;font-size:11px;flex:1">−30s</button>
+          <button class="pill-btn" onclick="adjust('walk',30)" style="padding:6px;font-size:11px;flex:1">+30s</button>
+          <button class="pill-btn" onclick="adjust('walk',-30)" style="padding:6px;font-size:11px;flex:1">−30s</button>
         </div>
       </div>
     </div>
@@ -245,8 +447,8 @@
   <div class="section-label">Workout Duration</div>
   <div class="card">
     <div class="duration-mode">
-      <button class="mode-btn active" id="mode-rounds" onclick="setMode('rounds')">By Rounds</button>
-      <button class="mode-btn" id="mode-time" onclick="setMode('time')">By Total Time</button>
+      <button class="pill-btn active" id="mode-rounds" onclick="setMode('rounds')">By Rounds</button>
+      <button class="pill-btn" id="mode-time" onclick="setMode('time')">By Total Time</button>
     </div>
     <div id="rounds-input">
       <div class="time-input-group">
@@ -273,31 +475,29 @@
   <div class="section-label">Music</div>
   <div class="spotify-card" id="spotify-card">
     <div id="spotify-connect-wrap">
-      <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Connect Spotify Premium to play music. Volume ducks automatically during audio cues.</p>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Connect Spotify Premium. Volume ducks automatically during audio cues.</p>
       <button class="spotify-connect-btn" onclick="spotifyLogin()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
-        </svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
         Connect Spotify
       </button>
     </div>
     <div class="spotify-status" id="spotify-status">
-      <div class="spotify-avatar" id="spotify-avatar">🎵</div>
+      <div class="spotify-avatar-sm" id="spotify-avatar">🎵</div>
       <div class="spotify-info">
         <div class="spotify-name" id="spotify-user-name">—</div>
-        <div class="spotify-connected-label">✓ Spotify Connected</div>
+        <div class="spotify-connected-label">✓ Connected</div>
       </div>
       <button class="spotify-disconnect" onclick="spotifyDisconnect()">Disconnect</button>
     </div>
   </div>
 
-  <button class="start-btn" onclick="startWorkout()">START WORKOUT</button>
+  <button class="primary-btn" onclick="startWorkout()" style="margin-top:auto;">START WORKOUT</button>
 </div>
 
 <!-- ══════════ TIMER ══════════ -->
 <div class="screen" id="timer">
   <div class="timer-header">
-    <button class="back-btn" onclick="stopWorkout()">←</button>
+    <button class="icon-btn" onclick="stopWorkout()">←</button>
     <span class="round-badge" id="round-display">ROUND 1 / 8</span>
     <div style="width:44px"></div>
   </div>
@@ -317,16 +517,26 @@
     <div class="total-remaining" id="total-remaining">TOTAL: 16:00</div>
   </div>
 
+  <!-- Now Playing -->
   <div class="now-playing" id="now-playing">
-    <div class="np-art"><img id="np-art-img" src="" alt="" style="display:none"/></div>
-    <div class="np-info">
-      <div class="np-track" id="np-track">Not playing</div>
-      <div class="np-artist" id="np-artist">—</div>
+    <div class="np-track-row">
+      <div class="np-art"><img id="np-art-img" src="" alt="" style="display:none"/></div>
+      <div class="np-info">
+        <div class="np-track" id="np-track">Not playing</div>
+        <div class="np-artist" id="np-artist">—</div>
+      </div>
     </div>
-    <div class="np-controls">
-      <button class="np-btn" onclick="spotifyPrev()">⏮</button>
-      <button class="np-btn play-pause" id="np-play-pause" onclick="spotifyPlayPause()">▶</button>
-      <button class="np-btn" onclick="spotifyNext()">⏭</button>
+    <div class="np-controls-row">
+      <button class="np-side-btn" onclick="spotifyPrev()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+      </button>
+      <button class="np-play-btn" id="np-play-pause" onclick="spotifyPlayPause()">
+        <svg id="np-play-icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="np-pause-icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+      </button>
+      <button class="np-side-btn" onclick="spotifyNext()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+      </button>
     </div>
   </div>
 
@@ -334,6 +544,30 @@
     <button class="ctrl-btn ctrl-secondary" onclick="skipPhase()">⏭</button>
     <button class="ctrl-btn" id="play-pause-btn" onclick="togglePause()">PAUSE</button>
     <button class="ctrl-btn ctrl-secondary" onclick="stopWorkout()">✕</button>
+  </div>
+</div>
+
+<!-- ══════════ PROFILE ══════════ -->
+<div class="screen" id="profile">
+  <div class="profile-header">
+    <button class="icon-btn" onclick="showScreen('setup')">←</button>
+    <div class="profile-header-title">PROFILE</div>
+    <button class="icon-btn" onclick="confirmSignOut()" title="Sign out" style="font-size:16px;">↪</button>
+  </div>
+
+  <div class="profile-avatar-wrap">
+    <div class="profile-avatar-large" id="profile-avatar-large">👤</div>
+    <div class="profile-display-name" id="profile-display-name">—</div>
+    <div class="profile-email" id="profile-email">—</div>
+  </div>
+
+  <div class="section-label">Saved Presets</div>
+  <div class="preset-list" id="preset-list">
+    <p style="color:var(--muted);font-size:13px;">No presets saved yet.</p>
+  </div>
+
+  <div style="margin-top:16px;">
+    <button class="primary-btn secondary" onclick="savePresetModal()">+ Save Current Settings as Preset</button>
   </div>
 </div>
 
@@ -348,223 +582,518 @@
     <div class="stat-card"><div class="stat-val" id="done-run">—</div><div class="stat-label">Run Time</div></div>
     <div class="stat-card"><div class="stat-val" id="done-walk">—</div><div class="stat-label">Walk Time</div></div>
   </div>
-  <button class="again-btn" onclick="goSetup()">GO AGAIN</button>
+  <div class="done-actions">
+    <button class="primary-btn" onclick="goSetup()">GO AGAIN</button>
+  </div>
 </div>
 
-<script>
+<!-- ══════════ SAVE PRESET MODAL ══════════ -->
+<div class="modal-overlay" id="preset-modal">
+  <div class="modal">
+    <div class="modal-title">SAVE PRESET</div>
+    <input type="text" id="preset-name-input" placeholder="e.g. Easy Run, Sprint Day..."/>
+    <label style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);cursor:pointer;">
+      <input type="checkbox" id="preset-default-check" style="width:auto;margin-bottom:0;accent-color:var(--run)"/>
+      Set as default (auto-fills on startup)
+    </label>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" onclick="closePresetModal()">Cancel</button>
+      <button class="modal-btn confirm" onclick="confirmSavePreset()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, OAuthProvider,
+  createUserWithEmailAndPassword, signInWithEmailAndPassword, sendSignInLinkToEmail,
+  isSignInWithEmailLink, signInWithEmailLink, sendPasswordResetEmail, signOut
+} from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getFirestore, doc, getDoc, setDoc, collection,
+  addDoc, getDocs, deleteDoc, updateDoc, query, where
+} from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+// ── CONFIG ──
+const firebaseConfig = {
+  apiKey: "AIzaSyC6GjMQKZ4E6KU_VL0o8CN3j7bC7_AV_L4",
+  authDomain: "interval-runner-a8352.firebaseapp.com",
+  projectId: "interval-runner-a8352",
+  storageBucket: "interval-runner-a8352.firebasestorage.app",
+  messagingSenderId: "460573757597",
+  appId: "1:460573757597:web:641be6d0cab00c3632c474",
+  measurementId: "G-72RVTM9DDF"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// ── AUTH STATE ──
+let currentUser = null;
+
+onAuthStateChanged(auth, async user => {
+  currentUser = user;
+  document.getElementById('loading').style.display = 'none';
+
+  if(user) {
+    updateProfileUI(user);
+    await loadUserData(user.uid);
+    showScreen('setup');
+  } else {
+    // Check magic link
+    if(isSignInWithEmailLink(auth, window.location.href)) {
+      const email = localStorage.getItem('emailForSignIn');
+      if(email) {
+        try {
+          await signInWithEmailLink(auth, email, window.location.href);
+          localStorage.removeItem('emailForSignIn');
+          window.history.replaceState({}, '', '/');
+        } catch(e) { showAuthError(e.message); }
+        return;
+      }
+    }
+    showScreen('auth');
+  }
+});
+
+// ── AUTH FUNCTIONS ──
+window.switchAuthTab = (tab) => {
+  const isLogin = tab === 'login';
+  document.getElementById('tab-login').classList.toggle('active', isLogin);
+  document.getElementById('tab-signup').classList.toggle('active', !isLogin);
+  document.getElementById('auth-submit-btn').textContent = isLogin ? 'SIGN IN' : 'CREATE ACCOUNT';
+  document.getElementById('forgot-wrap').style.display = isLogin ? 'block' : 'none';
+  document.getElementById('magic-link-btn').textContent = isLogin ? 'Send magic link instead' : 'Send magic link instead';
+  window._authTab = tab;
+};
+window._authTab = 'login';
+
+window.handleEmailAuth = async () => {
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+  if(!email || !password) { showAuthError('Please enter email and password.'); return; }
+  try {
+    if(window._authTab === 'login') {
+      await signInWithEmailAndPassword(auth, email, password);
+    } else {
+      await createUserWithEmailAndPassword(auth, email, password);
+    }
+  } catch(e) { showAuthError(friendlyError(e.code)); }
+};
+
+window.signInGoogle = async () => {
+  try {
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(auth, provider);
+  } catch(e) { showAuthError(friendlyError(e.code)); }
+};
+
+window.signInApple = async () => {
+  try {
+    const provider = new OAuthProvider('apple.com');
+    await signInWithPopup(auth, provider);
+  } catch(e) { showAuthError(friendlyError(e.code)); }
+};
+
+window.sendMagicLink = async () => {
+  const email = document.getElementById('auth-email').value.trim();
+  if(!email) { showAuthError('Enter your email first.'); return; }
+  const actionCodeSettings = {
+    url: 'https://interval-runner.vercel.app',
+    handleCodeInApp: true,
+  };
+  try {
+    await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+    localStorage.setItem('emailForSignIn', email);
+    showAuthSuccess('Magic link sent! Check your email.');
+  } catch(e) { showAuthError(friendlyError(e.code)); }
+};
+
+window.sendPasswordReset = async () => {
+  const email = document.getElementById('auth-email').value.trim();
+  if(!email) { showAuthError('Enter your email first.'); return; }
+  try {
+    await sendPasswordResetEmail(auth, email);
+    showAuthSuccess('Password reset email sent!');
+  } catch(e) { showAuthError(friendlyError(e.code)); }
+};
+
+window.skipAuth = () => {
+  showScreen('setup');
+};
+
+window.confirmSignOut = async () => {
+  if(confirm('Sign out?')) {
+    await signOut(auth);
+    showScreen('auth');
+  }
+};
+
+function showAuthError(msg) {
+  const el = document.getElementById('auth-error');
+  el.textContent = msg; el.style.display = 'block';
+  document.getElementById('auth-success').style.display = 'none';
+}
+function showAuthSuccess(msg) {
+  const el = document.getElementById('auth-success');
+  el.textContent = msg; el.style.display = 'block';
+  document.getElementById('auth-error').style.display = 'none';
+}
+
+function friendlyError(code) {
+  const map = {
+    'auth/user-not-found': 'No account found with that email.',
+    'auth/wrong-password': 'Incorrect password.',
+    'auth/email-already-in-use': 'An account with that email already exists.',
+    'auth/weak-password': 'Password should be at least 6 characters.',
+    'auth/invalid-email': 'Please enter a valid email.',
+    'auth/popup-closed-by-user': 'Sign in cancelled.',
+    'auth/cancelled-popup-request': '',
+  };
+  return map[code] || 'Something went wrong. Please try again.';
+}
+
+// ── USER PROFILE ──
+function updateProfileUI(user) {
+  const name = user.displayName || user.email || 'Runner';
+  const email = user.email || '';
+  const photo = user.photoURL;
+
+  document.getElementById('profile-display-name').textContent = name;
+  document.getElementById('profile-email').textContent = email;
+
+  const avatarLarge = document.getElementById('profile-avatar-large');
+  const avatarBtn = document.getElementById('avatar-btn');
+
+  if(photo) {
+    avatarLarge.innerHTML = `<img src="${photo}" alt=""/>`;
+    avatarBtn.innerHTML = `<img src="${photo}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`;
+  } else {
+    avatarLarge.textContent = name[0].toUpperCase();
+    avatarBtn.textContent = name[0].toUpperCase();
+  }
+}
+
+// ── FIRESTORE: USER DATA ──
+async function loadUserData(uid) {
+  try {
+    const userDoc = await getDoc(doc(db, 'users', uid));
+    if(userDoc.exists()) {
+      const data = userDoc.data();
+      if(data.defaultPreset) applyPreset(data.defaultPreset);
+    }
+    await loadPresets(uid);
+  } catch(e) { console.warn('Could not load user data', e); }
+}
+
+async function loadPresets(uid) {
+  try {
+    const snap = await getDocs(collection(db, 'users', uid, 'presets'));
+    window._presets = [];
+    snap.forEach(d => window._presets.push({ id: d.id, ...d.data() }));
+    renderPresets();
+  } catch(e) { console.warn('Could not load presets', e); }
+}
+
+function applyPreset(preset) {
+  setTimeDisplay('run', preset.runSec || 60);
+  setTimeDisplay('walk', preset.walkSec || 30);
+  if(preset.mode) setMode(preset.mode);
+  if(preset.mode === 'rounds' && preset.rounds) {
+    document.getElementById('rounds-val').textContent = preset.rounds;
+  }
+  if(preset.mode === 'time' && preset.totalMinutes) {
+    document.getElementById('total-time-val').textContent = preset.totalMinutes;
+  }
+}
+
+function renderPresets() {
+  const scroll = document.getElementById('presets-scroll');
+  const list = document.getElementById('preset-list');
+  const presets = window._presets || [];
+
+  // Setup screen chips
+  scroll.innerHTML = `<button class="preset-chip add-chip" onclick="savePresetModal()">+ Save Current</button>`;
+  presets.forEach(p => {
+    const chip = document.createElement('button');
+    chip.className = 'preset-chip' + (p.isDefault ? ' active' : '');
+    chip.textContent = p.name + (p.isDefault ? ' ★' : '');
+    chip.onclick = () => applyPreset(p);
+    scroll.appendChild(chip);
+  });
+
+  // Profile screen list
+  if(presets.length === 0) {
+    list.innerHTML = `<p style="color:var(--muted);font-size:13px;">No presets saved yet.</p>`;
+    return;
+  }
+  list.innerHTML = '';
+  presets.forEach(p => {
+    const item = document.createElement('div');
+    item.className = 'preset-item';
+    item.innerHTML = `
+      <div class="preset-item-info">
+        <div class="preset-item-name">${p.name} ${p.isDefault ? '<span class="default-badge">DEFAULT</span>' : ''}</div>
+        <div class="preset-item-details">Run ${fmtSec(p.runSec)} · Walk ${fmtSec(p.walkSec)} · ${p.mode === 'rounds' ? p.rounds+' rounds' : p.totalMinutes+'min'}</div>
+      </div>
+      <div class="preset-item-actions">
+        <button class="preset-action-btn" onclick="applyPresetAndGo('${p.id}')" title="Load">▶</button>
+        ${!p.isDefault ? `<button class="preset-action-btn" onclick="setDefaultPreset('${p.id}')" title="Set default">★</button>` : ''}
+        <button class="preset-action-btn delete" onclick="deletePreset('${p.id}')" title="Delete">🗑</button>
+      </div>`;
+    list.appendChild(item);
+  });
+}
+
+window.applyPresetAndGo = (id) => {
+  const p = (window._presets||[]).find(x => x.id === id);
+  if(p) { applyPreset(p); showScreen('setup'); }
+};
+
+window.setDefaultPreset = async (id) => {
+  if(!currentUser) return;
+  const preset = (window._presets||[]).find(x => x.id === id);
+  if(!preset) return;
+  // Clear old default
+  for(const p of window._presets) {
+    if(p.isDefault && p.id !== id) {
+      await updateDoc(doc(db, 'users', currentUser.uid, 'presets', p.id), { isDefault: false });
+      p.isDefault = false;
+    }
+  }
+  await updateDoc(doc(db, 'users', currentUser.uid, 'presets', id), { isDefault: true });
+  await setDoc(doc(db, 'users', currentUser.uid), { defaultPreset: preset }, { merge: true });
+  preset.isDefault = true;
+  renderPresets();
+};
+
+window.deletePreset = async (id) => {
+  if(!currentUser) return;
+  if(!confirm('Delete this preset?')) return;
+  await deleteDoc(doc(db, 'users', currentUser.uid, 'presets', id));
+  window._presets = (window._presets||[]).filter(x => x.id !== id);
+  renderPresets();
+};
+
+// ── PRESET MODAL ──
+window.savePresetModal = () => {
+  document.getElementById('preset-name-input').value = '';
+  document.getElementById('preset-default-check').checked = false;
+  document.getElementById('preset-modal').classList.add('open');
+};
+window.closePresetModal = () => document.getElementById('preset-modal').classList.remove('open');
+
+window.confirmSavePreset = async () => {
+  const name = document.getElementById('preset-name-input').value.trim();
+  if(!name) { alert('Please enter a preset name.'); return; }
+
+  const preset = {
+    name,
+    runSec: getTimeSec('run'),
+    walkSec: getTimeSec('walk'),
+    mode: window._mode,
+    rounds: parseInt(document.getElementById('rounds-val').textContent),
+    totalMinutes: parseInt(document.getElementById('total-time-val').textContent),
+    isDefault: document.getElementById('preset-default-check').checked,
+    createdAt: Date.now(),
+  };
+
+  if(!currentUser) {
+    // Store locally for guest users
+    window._presets = window._presets || [];
+    window._presets.push({ id: Date.now().toString(), ...preset });
+    renderPresets();
+    closePresetModal();
+    return;
+  }
+
+  try {
+    if(preset.isDefault) {
+      // Clear old defaults
+      for(const p of (window._presets||[])) {
+        if(p.isDefault) {
+          await updateDoc(doc(db, 'users', currentUser.uid, 'presets', p.id), { isDefault: false });
+          p.isDefault = false;
+        }
+      }
+      await setDoc(doc(db, 'users', currentUser.uid), { defaultPreset: preset }, { merge: true });
+    }
+    const ref = await addDoc(collection(db, 'users', currentUser.uid, 'presets'), preset);
+    window._presets = window._presets || [];
+    window._presets.push({ id: ref.id, ...preset });
+    renderPresets();
+    closePresetModal();
+  } catch(e) { alert('Could not save preset. Try again.'); }
+};
+
+// ── HELPER ──
+function fmtSec(s) { return Math.floor(s/60)+'m '+pad(s%60)+'s'; }
+
+// Expose firebase functions to global scope
+window._firebaseSignOut = () => signOut(auth);
+
 // ══════════════════════════════════════════
-// CONFIG
+// SPOTIFY PKCE
 // ══════════════════════════════════════════
 const SPOTIFY_CLIENT_ID = 'd4e44f06f97d4dd2a661c0589dc72d8c';
 const REDIRECT_URI = 'https://interval-runner.vercel.app';
-const SCOPES = [
-  'streaming',
-  'user-read-email',
-  'user-read-private',
-  'user-modify-playback-state',
-  'user-read-playback-state'
-].join(' ');
+const SCOPES = ['streaming','user-read-email','user-read-private','user-modify-playback-state','user-read-playback-state'].join(' ');
 
-// ══════════════════════════════════════════
-// PKCE HELPERS
-// ══════════════════════════════════════════
 async function generateCodeVerifier() {
-  const arr = new Uint8Array(64);
-  crypto.getRandomValues(arr);
+  const arr = new Uint8Array(64); crypto.getRandomValues(arr);
   return btoa(String.fromCharCode(...arr)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
 }
-
-async function generateCodeChallenge(verifier) {
-  const data = new TextEncoder().encode(verifier);
-  const digest = await crypto.subtle.digest('SHA-256', data);
-  return btoa(String.fromCharCode(...new Uint8Array(digest))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
+async function generateCodeChallenge(v) {
+  const d = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(v));
+  return btoa(String.fromCharCode(...new Uint8Array(d))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
 }
 
-async function spotifyLogin() {
-  const verifier = await generateCodeVerifier();
-  const challenge = await generateCodeChallenge(verifier);
-  sessionStorage.setItem('pkce_verifier', verifier);
+window.spotifyLogin = async () => {
+  const v = await generateCodeVerifier();
+  sessionStorage.setItem('pkce_v', v);
   const params = new URLSearchParams({
-    client_id: SPOTIFY_CLIENT_ID,
-    response_type: 'code',
-    redirect_uri: REDIRECT_URI,
-    code_challenge_method: 'S256',
-    code_challenge: challenge,
-    scope: SCOPES,
+    client_id: SPOTIFY_CLIENT_ID, response_type: 'code',
+    redirect_uri: REDIRECT_URI, code_challenge_method: 'S256',
+    code_challenge: await generateCodeChallenge(v), scope: SCOPES,
   });
   window.location.href = 'https://accounts.spotify.com/authorize?' + params;
-}
-
-async function exchangeCode(code) {
-  const verifier = sessionStorage.getItem('pkce_verifier');
-  if(!verifier) return null;
-  const r = await fetch('https://accounts.spotify.com/api/token', {
-    method: 'POST',
-    headers: {'Content-Type':'application/x-www-form-urlencoded'},
-    body: new URLSearchParams({
-      client_id: SPOTIFY_CLIENT_ID,
-      grant_type: 'authorization_code',
-      code, redirect_uri: REDIRECT_URI, code_verifier: verifier
-    })
-  });
-  sessionStorage.removeItem('pkce_verifier');
-  return r.ok ? r.json() : null;
-}
-
-async function refreshToken(rt) {
-  const r = await fetch('https://accounts.spotify.com/api/token', {
-    method: 'POST',
-    headers: {'Content-Type':'application/x-www-form-urlencoded'},
-    body: new URLSearchParams({
-      client_id: SPOTIFY_CLIENT_ID,
-      grant_type: 'refresh_token',
-      refresh_token: rt
-    })
-  });
-  return r.ok ? r.json() : null;
-}
-
-// ══════════════════════════════════════════
-// SPOTIFY STATE
-// ══════════════════════════════════════════
-const sp = {
-  accessToken: null, refreshToken: null, expiresAt: 0,
-  player: null, deviceId: null, connected: false,
-  isPlaying: false, pollTimer: null,
 };
 
-function saveTokens(d) {
+async function exchangeCode(code) {
+  const v = sessionStorage.getItem('pkce_v');
+  if(!v) return null;
+  const r = await fetch('https://accounts.spotify.com/api/token', {
+    method: 'POST', headers: {'Content-Type':'application/x-www-form-urlencoded'},
+    body: new URLSearchParams({ client_id: SPOTIFY_CLIENT_ID, grant_type: 'authorization_code', code, redirect_uri: REDIRECT_URI, code_verifier: v })
+  });
+  sessionStorage.removeItem('pkce_v');
+  return r.ok ? r.json() : null;
+}
+
+async function refreshSpotifyToken(rt) {
+  const r = await fetch('https://accounts.spotify.com/api/token', {
+    method: 'POST', headers: {'Content-Type':'application/x-www-form-urlencoded'},
+    body: new URLSearchParams({ client_id: SPOTIFY_CLIENT_ID, grant_type: 'refresh_token', refresh_token: rt })
+  });
+  return r.ok ? r.json() : null;
+}
+
+const sp = { accessToken:null, refreshToken:null, expiresAt:0, player:null, deviceId:null, connected:false, isPlaying:false, pollTimer:null };
+
+function saveSpotifyTokens(d) {
   sp.accessToken = d.access_token;
   if(d.refresh_token) sp.refreshToken = d.refresh_token;
-  sp.expiresAt = Date.now() + d.expires_in * 1000 - 60000;
+  sp.expiresAt = Date.now() + d.expires_in*1000 - 60000;
   localStorage.setItem('sp_a', d.access_token);
   if(d.refresh_token) localStorage.setItem('sp_r', d.refresh_token);
   localStorage.setItem('sp_e', sp.expiresAt);
 }
 
-function loadTokens() {
+function loadSpotifyTokens() {
   sp.accessToken = localStorage.getItem('sp_a');
   sp.refreshToken = localStorage.getItem('sp_r');
   sp.expiresAt = parseInt(localStorage.getItem('sp_e')||'0');
 }
 
-async function ensureToken() {
+async function ensureSpotifyToken() {
   if(!sp.accessToken) return false;
   if(Date.now() < sp.expiresAt) return true;
   if(!sp.refreshToken) return false;
-  const d = await refreshToken(sp.refreshToken);
+  const d = await refreshSpotifyToken(sp.refreshToken);
   if(!d) { spotifyDisconnect(); return false; }
-  saveTokens(d); return true;
+  saveSpotifyTokens(d); return true;
 }
 
-async function api(path, method='GET', body=null) {
-  if(!(await ensureToken())) return null;
+async function spAPI(path, method='GET', body=null) {
+  if(!(await ensureSpotifyToken())) return null;
   const opts = { method, headers: { Authorization: 'Bearer '+sp.accessToken } };
   if(body) { opts.headers['Content-Type']='application/json'; opts.body=JSON.stringify(body); }
   const r = await fetch('https://api.spotify.com/v1'+path, opts);
-  if(r.status===204||r.status===202||r.status===200) {
-    try { return await r.json(); } catch { return {}; }
-  }
-  return null;
+  try { return r.status===204||r.status===202 ? {} : await r.json(); } catch { return {}; }
 }
 
-// ══════════════════════════════════════════
-// SPOTIFY UI
-// ══════════════════════════════════════════
-async function finishConnect() {
+async function finishSpotifyConnect() {
   sp.connected = true;
   document.getElementById('spotify-connect-wrap').style.display = 'none';
   document.getElementById('spotify-status').classList.add('visible');
   document.getElementById('spotify-card').classList.add('connected');
-
-  const me = await api('/me');
+  const me = await spAPI('/me');
   if(me) {
     document.getElementById('spotify-user-name').textContent = me.display_name || me.id;
-    if(me.images && me.images[0]) {
-      document.getElementById('spotify-avatar').innerHTML = `<img src="${me.images[0].url}" alt=""/>`;
-    }
+    if(me.images?.[0]) document.getElementById('spotify-avatar').innerHTML = `<img src="${me.images[0].url}" alt=""/>`;
   }
-  loadSDK();
+  loadSpotifySDK();
 }
 
-function spotifyDisconnect() {
-  ['sp_a','sp_r','sp_e'].forEach(k => localStorage.removeItem(k));
-  sp.accessToken = sp.refreshToken = null;
-  sp.connected = false;
+window.spotifyDisconnect = () => {
+  ['sp_a','sp_r','sp_e'].forEach(k=>localStorage.removeItem(k));
+  sp.accessToken = sp.refreshToken = null; sp.connected = false;
   if(sp.player) { sp.player.disconnect(); sp.player = null; }
   clearInterval(sp.pollTimer);
   document.getElementById('spotify-connect-wrap').style.display = 'block';
   document.getElementById('spotify-status').classList.remove('visible');
   document.getElementById('spotify-card').classList.remove('connected');
   document.getElementById('now-playing').classList.remove('visible');
-}
+};
 
 function updateNowPlaying(item, playing) {
   if(!item) return;
   document.getElementById('now-playing').classList.add('visible');
-  document.getElementById('np-track').textContent = item.name || '—';
+  document.getElementById('np-track').textContent = item.name||'—';
   document.getElementById('np-artist').textContent = (item.artists||[]).map(a=>a.name).join(', ')||'—';
   const img = document.getElementById('np-art-img');
-  const art = item.album && item.album.images && item.album.images[0];
-  if(art) { img.src = art.url; img.style.display = 'block'; }
-  document.getElementById('np-play-pause').textContent = playing ? '⏸' : '▶';
+  const art = item.album?.images?.[0];
+  if(art) { img.src=art.url; img.style.display='block'; }
+  document.getElementById('np-play-icon').style.display = playing ? 'none' : 'block';
+  document.getElementById('np-pause-icon').style.display = playing ? 'block' : 'none';
   sp.isPlaying = playing;
 }
 
-async function pollPlayback() {
-  if(!sp.connected) return;
-  const d = await api('/me/player');
-  if(d && d.item) updateNowPlaying(d.item, d.is_playing);
-}
-
-// ══════════════════════════════════════════
-// WEB PLAYBACK SDK
-// ══════════════════════════════════════════
-function loadSDK() {
-  if(window.Spotify) { createPlayer(); return; }
-  window.onSpotifyWebPlaybackSDKReady = createPlayer;
+function loadSpotifySDK() {
+  if(window.Spotify) { createSpotifyPlayer(); return; }
+  window.onSpotifyWebPlaybackSDKReady = createSpotifyPlayer;
   if(!document.getElementById('sp-sdk')) {
-    const s = document.createElement('script');
-    s.id = 'sp-sdk';
-    s.src = 'https://sdk.scdn.co/spotify-player.js';
-    document.head.appendChild(s);
+    const s = document.createElement('script'); s.id='sp-sdk';
+    s.src='https://sdk.scdn.co/spotify-player.js'; document.head.appendChild(s);
   }
 }
 
-function createPlayer() {
+function createSpotifyPlayer() {
   sp.player = new Spotify.Player({
     name: 'Interval Runner',
-    getOAuthToken: async cb => { await ensureToken(); cb(sp.accessToken); },
+    getOAuthToken: async cb => { await ensureSpotifyToken(); cb(sp.accessToken); },
     volume: 0.8
   });
   sp.player.addListener('ready', ({ device_id }) => {
     sp.deviceId = device_id;
-    api('/me/player', 'PUT', { device_ids: [device_id], play: false });
+    spAPI('/me/player', 'PUT', { device_ids: [device_id], play: false });
   });
   sp.player.addListener('player_state_changed', s => {
     if(!s) return;
     updateNowPlaying(s.track_window.current_track, !s.paused);
   });
   sp.player.connect();
-  sp.pollTimer = setInterval(pollPlayback, 4000);
+  sp.pollTimer = setInterval(async () => {
+    if(!sp.connected) return;
+    const d = await spAPI('/me/player');
+    if(d?.item) updateNowPlaying(d.item, d.is_playing);
+  }, 4000);
 }
 
-// ══════════════════════════════════════════
-// PLAYBACK CONTROLS
-// ══════════════════════════════════════════
-async function spotifyPlayPause() {
+window.spotifyPlayPause = async () => {
   if(!sp.connected) return;
-  if(sp.isPlaying) { await api('/me/player/pause','PUT'); sp.isPlaying=false; document.getElementById('np-play-pause').textContent='▶'; }
-  else { await api('/me/player/play','PUT'); sp.isPlaying=true; document.getElementById('np-play-pause').textContent='⏸'; }
-}
-async function spotifyNext() { if(sp.connected) await api('/me/player/next','POST'); }
-async function spotifyPrev() { if(sp.connected) await api('/me/player/previous','POST'); }
+  if(sp.isPlaying) { await spAPI('/me/player/pause','PUT'); }
+  else { await spAPI('/me/player/play','PUT'); }
+  sp.isPlaying = !sp.isPlaying;
+  document.getElementById('np-play-icon').style.display = sp.isPlaying ? 'none' : 'block';
+  document.getElementById('np-pause-icon').style.display = sp.isPlaying ? 'block' : 'none';
+};
+window.spotifyNext = () => sp.connected && spAPI('/me/player/next','POST');
+window.spotifyPrev = () => sp.connected && spAPI('/me/player/previous','POST');
 
-// ══════════════════════════════════════════
-// AUDIO DUCKING
-// ══════════════════════════════════════════
 async function duck() { if(sp.player) await sp.player.setVolume(0.12); }
-async function unduck(ms=1800) { if(sp.player) setTimeout(()=>sp.player.setVolume(0.8), ms); }
+async function unduck(ms=1800) { if(sp.player) setTimeout(()=>sp.player.setVolume(0.8),ms); }
 
 // ══════════════════════════════════════════
 // AUDIO CUES
@@ -574,19 +1103,19 @@ function ensureAudio() {
   if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
   if(audioCtx.state==='suspended') audioCtx.resume();
 }
-function beep(freq, dur, type='sine', vol=0.5) {
+function beep(freq,dur,type='sine',vol=0.5) {
   ensureAudio();
-  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+  const o=audioCtx.createOscillator(), g=audioCtx.createGain();
   o.connect(g); g.connect(audioCtx.destination);
-  o.type=type; o.frequency.setValueAtTime(freq, audioCtx.currentTime);
-  g.gain.setValueAtTime(vol, audioCtx.currentTime);
-  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime+dur);
+  o.type=type; o.frequency.setValueAtTime(freq,audioCtx.currentTime);
+  g.gain.setValueAtTime(vol,audioCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+dur);
   o.start(); o.stop(audioCtx.currentTime+dur);
 }
 function speak(t) {
   if(!window.speechSynthesis) return;
   speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(t); u.rate=1.1;
+  const u=new SpeechSynthesisUtterance(t); u.rate=1.1;
   speechSynthesis.speak(u);
 }
 function playRunCue() { duck(); beep(880,0.15,'square',0.4); setTimeout(()=>beep(1320,0.25,'square',0.5),160); speak('Run!'); unduck(1600); }
@@ -599,54 +1128,46 @@ function playDone() { duck(); [523,659,784,1047].forEach((f,i)=>setTimeout(()=>b
 // ══════════════════════════════════════════
 const pad = n => String(Math.max(0,n)).padStart(2,'0');
 function getTimeSec(p) { return parseInt(document.getElementById(p+'-min').textContent)*60+parseInt(document.getElementById(p+'-sec').textContent); }
-function setTimeDisplay(p, s) {
-  s = Math.max(5,s);
-  document.getElementById(p+'-min').textContent = pad(Math.floor(s/60));
-  document.getElementById(p+'-sec').textContent = pad(s%60);
-}
-function adjust(p, d) { setTimeDisplay(p, getTimeSec(p)+d); }
-function adjustVal(id, d) { const el=document.getElementById(id+'-val'); el.textContent=Math.max(1,parseInt(el.textContent)+d); }
-function setMode(m) {
+function setTimeDisplay(p,s) { s=Math.max(5,s); document.getElementById(p+'-min').textContent=pad(Math.floor(s/60)); document.getElementById(p+'-sec').textContent=pad(s%60); }
+
+window.adjust = (p,d) => setTimeDisplay(p, getTimeSec(p)+d);
+window.adjustVal = (id,d) => { const el=document.getElementById(id+'-val'); el.textContent=Math.max(1,parseInt(el.textContent)+d); };
+window.setMode = (m) => {
   window._mode=m;
   document.getElementById('mode-rounds').classList.toggle('active',m==='rounds');
   document.getElementById('mode-time').classList.toggle('active',m==='time');
   document.getElementById('rounds-input').style.display=m==='rounds'?'block':'none';
   document.getElementById('totaltime-input').style.display=m==='time'?'block':'none';
-}
+};
 window._mode='rounds';
+window._presets = [];
 
 // ══════════════════════════════════════════
 // TIMER
 // ══════════════════════════════════════════
 const T = { runSec:0,walkSec:0,phase:'run',round:1,maxRounds:0,phaseLeft:0,totalLeft:0,paused:false,timer:null,elapsed:0,runAccum:0,walkAccum:0 };
 
-function startWorkout() {
+window.startWorkout = () => {
   ensureAudio();
-  T.runSec = getTimeSec('run');
-  T.walkSec = getTimeSec('walk');
-  T.phase = 'run'; T.round = 1; T.paused = false;
-  T.elapsed = T.runAccum = T.walkAccum = 0;
-
+  T.runSec=getTimeSec('run'); T.walkSec=getTimeSec('walk');
+  T.phase='run'; T.round=1; T.paused=false; T.elapsed=T.runAccum=T.walkAccum=0;
   if(window._mode==='rounds') {
-    T.maxRounds = parseInt(document.getElementById('rounds-val').textContent);
-    T.totalLeft = T.maxRounds*(T.runSec+T.walkSec);
+    T.maxRounds=parseInt(document.getElementById('rounds-val').textContent);
+    T.totalLeft=T.maxRounds*(T.runSec+T.walkSec);
   } else {
-    T.totalLeft = parseInt(document.getElementById('total-time-val').textContent)*60;
-    T.maxRounds = Math.floor(T.totalLeft/(T.runSec+T.walkSec));
+    T.totalLeft=parseInt(document.getElementById('total-time-val').textContent)*60;
+    T.maxRounds=Math.floor(T.totalLeft/(T.runSec+T.walkSec));
   }
-  T.phaseLeft = T.runSec;
-
-  showScreen('timer');
-  updateUI();
-  playRunCue();
-  if(sp.connected && !sp.isPlaying) api('/me/player/play','PUT');
-  T.timer = setInterval(tick, 1000);
-}
+  T.phaseLeft=T.runSec;
+  showScreen('timer'); updateUI(); playRunCue();
+  if(sp.connected&&!sp.isPlaying) spAPI('/me/player/play','PUT');
+  T.timer=setInterval(tick,1000);
+};
 
 function tick() {
   if(T.paused) return;
   T.phaseLeft--; T.totalLeft=Math.max(0,T.totalLeft-1); T.elapsed++;
-  T.phase==='run' ? T.runAccum++ : T.walkAccum++;
+  T.phase==='run'?T.runAccum++:T.walkAccum++;
   if(T.phaseLeft<=3&&T.phaseLeft>0) playCountdown();
   if(T.phaseLeft<=0) { nextPhase(); return; }
   if(T.totalLeft<=0) { finishWorkout(); return; }
@@ -665,71 +1186,70 @@ function nextPhase() {
   updateUI();
 }
 
-function skipPhase() { T.phaseLeft=0; }
-
-function togglePause() {
+window.skipPhase = () => { T.phaseLeft=0; };
+window.togglePause = () => {
   T.paused=!T.paused;
   document.getElementById('play-pause-btn').textContent=T.paused?'RESUME':'PAUSE';
-  if(sp.connected) T.paused ? api('/me/player/pause','PUT') : api('/me/player/play','PUT');
-}
-
-function stopWorkout() {
-  clearInterval(T.timer); T.timer=null;
-  speechSynthesis && speechSynthesis.cancel();
-  showScreen('setup');
-}
+  if(sp.connected) T.paused?spAPI('/me/player/pause','PUT'):spAPI('/me/player/play','PUT');
+};
+window.stopWorkout = () => { clearInterval(T.timer); T.timer=null; speechSynthesis?.cancel(); showScreen('setup'); };
 
 function finishWorkout() {
   clearInterval(T.timer); T.timer=null; playDone();
-  document.getElementById('done-rounds').textContent = T.round-1;
-  document.getElementById('done-time').textContent = fmt(T.elapsed);
-  document.getElementById('done-run').textContent = fmt(T.runAccum);
-  document.getElementById('done-walk').textContent = fmt(T.walkAccum);
+  document.getElementById('done-rounds').textContent=T.round-1;
+  document.getElementById('done-time').textContent=fmtTime(T.elapsed);
+  document.getElementById('done-run').textContent=fmtTime(T.runAccum);
+  document.getElementById('done-walk').textContent=fmtTime(T.walkAccum);
   showScreen('done');
 }
 
-function fmt(s) { const m=Math.floor(s/60); return m>0?m+'m '+pad(s%60)+'s':s+'s'; }
+function fmtTime(s) { const m=Math.floor(s/60); return m>0?m+'m '+pad(s%60)+'s':s+'s'; }
 
 function updateUI() {
-  const run = T.phase==='run';
-  const col = run?'var(--run)':'var(--walk)';
-  document.getElementById('phase-label').textContent = run?'RUN':'WALK';
-  document.getElementById('phase-label').style.color = col;
-  document.getElementById('big-time').textContent = pad(Math.floor(T.phaseLeft/60))+':'+pad(T.phaseLeft%60);
-  const nextName=run?'WALK':'RUN', nextSec=run?T.walkSec:T.runSec;
-  document.getElementById('next-label').textContent = `next: ${nextName} ${pad(Math.floor(nextSec/60))}:${pad(nextSec%60)}`;
-  document.getElementById('round-display').textContent = `ROUND ${T.round} / ${window._mode==='rounds'?T.maxRounds:'∞'}`;
-  document.getElementById('total-remaining').textContent = `TOTAL: ${pad(Math.floor(T.totalLeft/60))}:${pad(T.totalLeft%60)}`;
-  const r=106, circ=2*Math.PI*r, total=run?T.runSec:T.walkSec;
+  const run=T.phase==='run', col=run?'var(--run)':'var(--walk)';
+  document.getElementById('phase-label').textContent=run?'RUN':'WALK';
+  document.getElementById('phase-label').style.color=col;
+  document.getElementById('big-time').textContent=pad(Math.floor(T.phaseLeft/60))+':'+pad(T.phaseLeft%60);
+  const nN=run?'WALK':'RUN', nS=run?T.walkSec:T.runSec;
+  document.getElementById('next-label').textContent=`next: ${nN} ${pad(Math.floor(nS/60))}:${pad(nS%60)}`;
+  document.getElementById('round-display').textContent=`ROUND ${T.round} / ${window._mode==='rounds'?T.maxRounds:'∞'}`;
+  document.getElementById('total-remaining').textContent=`TOTAL: ${pad(Math.floor(T.totalLeft/60))}:${pad(T.totalLeft%60)}`;
+  const r=106,circ=2*Math.PI*r,total=run?T.runSec:T.walkSec;
   const pc=document.getElementById('progress-circle');
   pc.style.strokeDasharray=circ; pc.style.strokeDashoffset=circ*(1-T.phaseLeft/total); pc.style.stroke=col;
   document.getElementById('play-pause-btn').style.background=col;
 }
 
-function showScreen(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-function goSetup() { showScreen('setup'); }
+// ══════════════════════════════════════════
+// SCREEN NAV
+// ══════════════════════════════════════════
+window.showScreen = (id) => {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+};
+window.goSetup = () => showScreen('setup');
 
 // ══════════════════════════════════════════
-// INIT & CALLBACK HANDLER
+// INIT
 // ══════════════════════════════════════════
 (async function init() {
   // Init ring
-  const r=106, circ=2*Math.PI*r, pc=document.getElementById('progress-circle');
+  const r=106,circ=2*Math.PI*r,pc=document.getElementById('progress-circle');
   pc.style.strokeDasharray=circ; pc.style.strokeDashoffset=0;
 
-  // Handle OAuth callback
-  const params = new URLSearchParams(window.location.search);
-  if(params.has('code')) {
-    history.replaceState({}, '', '/');
-    const d = await exchangeCode(params.get('code'));
-    if(d && d.access_token) { saveTokens(d); await finishConnect(); }
-    return;
+  // Handle Spotify callback
+  const params=new URLSearchParams(window.location.search);
+  if(params.has('code')&&sessionStorage.getItem('pkce_v')) {
+    history.replaceState({},'','/');
+    const d=await exchangeCode(params.get('code'));
+    if(d?.access_token) { saveSpotifyTokens(d); await finishSpotifyConnect(); }
+  } else if(params.has('code')) {
+    history.replaceState({},'','/');
   }
-  if(params.has('error')) { history.replaceState({}, '', '/'); return; }
 
-  // Restore saved session
-  loadTokens();
-  if(sp.accessToken && await ensureToken()) await finishConnect();
+  // Restore Spotify session
+  loadSpotifyTokens();
+  if(sp.accessToken && await ensureSpotifyToken()) await finishSpotifyConnect();
 })();
 </script>
 </body>
