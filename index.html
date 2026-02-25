@@ -357,7 +357,7 @@
     </div>
   </div>
   <div class="controls">
-    <button class="ctrl-btn ctrl-secondary" onclick="skipPhase()">⏭</button>
+    <button class="ctrl-btn ctrl-secondary" onclick="skipPhase()" style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.5px;">SKIP<br>SET</button>
     <button class="ctrl-btn" id="play-pause-btn" onclick="togglePause()">PAUSE</button>
     <button class="ctrl-btn ctrl-secondary" onclick="stopWorkout()">✕</button>
   </div>
@@ -1194,7 +1194,7 @@ function tick(){if(T.paused)return;T.phaseLeft--;T.totalLeft=Math.max(0,T.totalL
 function nextPhase(){if(T.phase==='run'){T.phase='walk';T.phaseLeft=T.walkSec;playWalkCue();}else{T.round++;if(window._mode==='rounds'&&T.round>T.maxRounds){finishWorkout();return;}T.phase='run';T.phaseLeft=T.runSec;playRunCue();}const rc=document.getElementById('ring-container');rc.classList.remove('pulse');void rc.offsetWidth;rc.classList.add('pulse');updateUI();}
 
 window.skipPhase=()=>{T.phaseLeft=0;};
-window.togglePause=()=>{T.paused=!T.paused;document.getElementById('play-pause-btn').textContent=T.paused?'RESUME':'PAUSE';if(sp.connected)T.paused?spAPI('/me/player/pause','PUT'):spAPI('/me/player/play','PUT');};
+window.togglePause=()=>{T.paused=!T.paused;document.getElementById('play-pause-btn').textContent=T.paused?'RESUME':'PAUSE';};
 window.stopWorkout=()=>{clearInterval(T.timer);T.timer=null;speechSynthesis?.cancel();showScreen('setup');};
 
 function finishWorkout(){clearInterval(T.timer);T.timer=null;playDone();document.getElementById('done-rounds').textContent=T.round-1;document.getElementById('done-time').textContent=fmtTime(T.elapsed);document.getElementById('done-run').textContent=fmtTime(T.runAccum);document.getElementById('done-walk').textContent=fmtTime(T.walkAccum);showScreen('done');}
