@@ -377,7 +377,7 @@
   <div class="controls">
     <button class="ctrl-btn ctrl-secondary" onclick="skipPhase()" style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.5px;">SKIP<br>SET</button>
     <button class="ctrl-btn" id="play-pause-btn" onclick="togglePause()">PAUSE</button>
-    <button class="ctrl-btn ctrl-secondary" onclick="stopWorkout()">✕</button>
+    <button class="ctrl-btn ctrl-secondary" onclick="confirmStop()">✕</button>
   </div>
 </div>
 
@@ -477,6 +477,18 @@
     <div class="stat-card"><div class="stat-val" id="done-walk">—</div><div class="stat-label">Walk Time</div></div>
   </div>
   <div class="done-actions"><button class="primary-btn" onclick="goSetup()">GO AGAIN</button></div>
+</div>
+
+<!-- ══════════ STOP CONFIRM MODAL ══════════ -->
+<div class="modal-overlay" id="stop-confirm-modal">
+  <div class="modal">
+    <div class="modal-title">END WORKOUT?</div>
+    <p style="font-size:14px;color:var(--muted);margin-bottom:20px;">Your progress will not be saved.</p>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" onclick="document.getElementById('stop-confirm-modal').classList.remove('open')">Keep Going</button>
+      <button class="modal-btn confirm" onclick="stopWorkout()">End Workout</button>
+    </div>
+  </div>
 </div>
 
 <!-- ══════════ CROP MODAL ══════════ -->
@@ -1246,7 +1258,13 @@ function nextPhase(){if(T.phase==='run'){T.phase='walk';T.phaseLeft=T.walkSec;pl
 
 window.skipPhase=()=>{T.phaseLeft=0;};
 window.togglePause=()=>{T.paused=!T.paused;document.getElementById('play-pause-btn').textContent=T.paused?'RESUME':'PAUSE';};
-window.stopWorkout=()=>{clearInterval(T.timer);T.timer=null;speechSynthesis?.cancel();showScreen('setup');};
+window.confirmStop=()=>{
+  document.getElementById('stop-confirm-modal').classList.add('open');
+};
+window.stopWorkout=()=>{
+  document.getElementById('stop-confirm-modal').classList.remove('open');
+  clearInterval(T.timer);T.timer=null;speechSynthesis?.cancel();showScreen('setup');
+};
 
 function finishWorkout(){clearInterval(T.timer);T.timer=null;playDone();document.getElementById('done-rounds').textContent=T.round-1;document.getElementById('done-time').textContent=fmtTime(T.elapsed);document.getElementById('done-run').textContent=fmtTime(T.runAccum);document.getElementById('done-walk').textContent=fmtTime(T.walkAccum);showScreen('done');}
 function fmtTime(s){const m=Math.floor(s/60);return m>0?m+'m '+pad(s%60)+'s':s+'s';}
