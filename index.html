@@ -149,6 +149,19 @@
   .upload-progress.visible { display: block; }
   .upload-bar { height: 100%; background: var(--run); border-radius: 2px; transition: width 0.3s; width: 0%; }
 
+  /* ── CROP MODAL ── */
+  .crop-overlay { position: fixed; inset: 0; background: #000; display: none; flex-direction: column; z-index: 300; }
+  .crop-overlay.open { display: flex; }
+  .crop-header { display: flex; align-items: center; justify-content: space-between; padding: 56px 20px 16px; flex-shrink: 0; }
+  .crop-title { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 2px; color: white; }
+  .crop-canvas-wrap { flex: 1; overflow: hidden; position: relative; }
+  .crop-canvas-wrap img { display: block; max-width: 100%; }
+  .crop-hint { text-align: center; font-size: 12px; color: #888; padding: 10px 20px; flex-shrink: 0; }
+  .crop-actions { display: flex; gap: 12px; padding: 12px 20px 40px; flex-shrink: 0; }
+  .crop-btn { flex: 1; padding: 18px; border: none; border-radius: 20px; cursor: pointer; font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; }
+  .crop-btn.confirm { background: #FF4D2E; color: white; }
+  .crop-btn.cancel { background: #242424; color: #F5F5F0; }
+
   .profile-save-btn { width: 100%; padding: 18px; background: var(--run); border: none; border-radius: var(--radius); color: white; font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 3px; cursor: pointer; margin-top: 4px; transition: transform 0.1s, opacity 0.1s; }
   .profile-save-btn:active { transform: scale(0.97); opacity: 0.9; }
   .profile-save-btn:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -412,6 +425,21 @@
   <div class="done-actions"><button class="primary-btn" onclick="goSetup()">GO AGAIN</button></div>
 </div>
 
+<!-- ══════════ CROP MODAL ══════════ -->
+<div class="crop-overlay" id="crop-overlay">
+  <div class="crop-header">
+    <div class="crop-title">CROP PHOTO</div>
+    <div style="font-size:12px;color:#888;">Pinch to zoom · Drag to reposition</div>
+  </div>
+  <div class="crop-canvas-wrap" id="crop-canvas-wrap">
+    <img id="crop-image" src="" alt="crop"/>
+  </div>
+  <div class="crop-hint">Drag and pinch to get the perfect crop</div>
+  <div class="crop-actions">
+    <button class="crop-btn cancel" onclick="cancelCrop()">Cancel</button>
+    <button class="crop-btn confirm" onclick="confirmCrop()">Use Photo</button>
+  </div>
+</div>
 <!-- ══════════ PRESET MODAL ══════════ -->
 <div class="modal-overlay" id="preset-modal">
   <div class="modal">
@@ -428,6 +456,8 @@
   </div>
 </div>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, OAuthProvider,
@@ -609,35 +639,79 @@ async function loadUserData(uid) {
 }
 
 // ── AVATAR UPLOAD ──
-window.handleAvatarFile = async (input) => {
+
+// ── AVATAR CROP ──
+let cropperInstance = null;
+
+window.handleAvatarFile = (input) => {
   const file = input.files[0];
   if(!file) return;
   if(file.size > 10 * 1024 * 1024) { alert('Image must be under 10MB.'); return; }
+  input.value = '';
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = document.getElementById('crop-image');
+    img.src = e.target.result;
+    document.getElementById('crop-overlay').classList.add('open');
+
+    // Destroy previous cropper if exists
+    if(cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
+
+    img.onload = () => {
+      cropperInstance = new Cropper(img, {
+        aspectRatio: 1,
+        viewMode: 1,
+        dragMode: 'move',
+        autoCropArea: 1,
+        restore: false,
+        guides: false,
+        center: false,
+        highlight: false,
+        cropBoxMovable: false,
+        cropBoxResizable: false,
+        toggleDragModeOnDblclick: false,
+      });
+    };
+  };
+  reader.readAsDataURL(file);
+};
+
+window.cancelCrop = () => {
+  document.getElementById('crop-overlay').classList.remove('open');
+  if(cropperInstance) { cropperInstance.destroy(); cropperInstance = null; }
+};
+
+window.confirmCrop = async () => {
+  if(!cropperInstance) return;
+  const canvas = cropperInstance.getCroppedCanvas({ width: 400, height: 400, imageSmoothingQuality: 'high' });
+  cropperInstance.destroy(); cropperInstance = null;
+  document.getElementById('crop-overlay').classList.remove('open');
 
   const progress = document.getElementById('upload-progress');
   const bar = document.getElementById('upload-bar');
   progress.classList.add('visible');
   bar.style.width = '0%';
 
-  try {
-    const url = await uploadToCloudinary(file, pct => { bar.style.width = pct + '%'; });
-    progress.classList.remove('visible');
+  canvas.toBlob(async (blob) => {
+    try {
+      const url = await uploadToCloudinary(blob, pct => { bar.style.width = pct + '%'; });
+      progress.classList.remove('visible');
 
-    // Update avatar preview
-    const avatarEl = document.getElementById('profile-avatar-large');
-    avatarEl.innerHTML = `<img src="${url}" alt=""/><div class="avatar-edit-overlay">✏️</div>`;
-    avatarEl.onclick = () => document.getElementById('avatar-file-input').click();
+      const avatarEl = document.getElementById('profile-avatar-large');
+      avatarEl.innerHTML = `<img src="${url}" alt=""/><div class="avatar-edit-overlay">✏️</div>`;
+      avatarEl.onclick = () => document.getElementById('avatar-file-input').click();
 
-    // Save to Firebase Auth + Firestore
-    if(currentUser) {
-      await updateProfile(currentUser, { photoURL: url });
-      await setDoc(doc(db, 'users', currentUser.uid), { photoURL: url }, { merge: true });
-      updateAvatarBtn(currentUser);
+      if(currentUser) {
+        await updateProfile(currentUser, { photoURL: url });
+        await setDoc(doc(db, 'users', currentUser.uid), { photoURL: url }, { merge: true });
+        updateAvatarBtn(currentUser);
+      }
+    } catch(e) {
+      progress.classList.remove('visible');
+      alert('Photo upload failed. Please try again.');
     }
-  } catch(e) {
-    progress.classList.remove('visible');
-    alert('Photo upload failed. Please try again.');
-  }
+  }, 'image/jpeg', 0.92);
 };
 
 // ── LOCATION ──
