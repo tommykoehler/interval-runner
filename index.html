@@ -247,8 +247,7 @@
 <!-- ══════════ SETUP ══════════ -->
 <div class="screen" id="setup">
   <div class="setup-header">
-    <div class="app-title">INTERVAL<br>RUNNER</div>
-    <div class="header-actions">
+    <div class="header-actions" style="margin-left:auto;">
       <button class="avatar-btn" id="avatar-btn" onclick="showScreen('profile')">👤</button>
     </div>
   </div>
@@ -350,7 +349,9 @@
   <div class="profile-header">
     <button class="icon-btn" onclick="showScreen('setup')">←</button>
     <div class="profile-header-title">PROFILE</div>
-    <button class="icon-btn" id="edit-profile-btn" onclick="openEditProfile()" style="font-size:13px;font-weight:600;width:auto;padding:0 14px;font-family:'DM Sans',sans-serif;">Edit</button>
+    <button class="icon-btn" onclick="showScreen('settings')" title="Settings">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
   </div>
 
   <!-- VIEW MODE -->
@@ -362,6 +363,7 @@
       <div id="profile-view-name" style="font-size:20px;font-weight:700;margin-top:10px;">—</div>
       <div id="profile-view-location" style="font-size:13px;color:var(--muted);margin-top:4px;display:none;">📍 <span id="profile-view-location-text"></span></div>
       <div id="profile-view-bio" style="font-size:14px;color:var(--muted);margin-top:8px;text-align:center;line-height:1.5;max-width:280px;display:none;"></div>
+      <button id="edit-profile-btn" onclick="openEditProfile()" style="margin-top:16px;padding:10px 24px;background:var(--surface2);border:none;border-radius:50px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;">Edit Profile</button>
     </div>
 
     <div class="section-label" style="margin-top:8px;">Saved Presets</div>
