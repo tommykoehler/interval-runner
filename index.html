@@ -252,8 +252,6 @@
       <button class="avatar-btn" id="avatar-btn" onclick="showScreen('profile')">👤</button>
     </div>
   </div>
-  <div class="section-label">Presets</div>
-  <div style="margin-bottom:16px;"><div class="presets-scroll" id="presets-scroll"><button class="preset-chip add-chip" onclick="savePresetModal()">+ Save Current</button></div></div>
   <div class="section-label">Interval Timing</div>
   <div class="card">
     <div class="time-input-row">
@@ -265,8 +263,8 @@
           <button onclick="adjust('run',5)">+</button>
         </div>
         <div style="display:flex;gap:6px;margin-top:4px;">
-          <button class="pill-btn" onclick="adjust('run',15)" style="padding:6px;font-size:11px;flex:1">+15s</button>
           <button class="pill-btn" onclick="adjust('run',-15)" style="padding:6px;font-size:11px;flex:1">−15s</button>
+          <button class="pill-btn" onclick="adjust('run',15)" style="padding:6px;font-size:11px;flex:1">+15s</button>
         </div>
       </div>
       <div class="time-input-group">
@@ -277,8 +275,8 @@
           <button onclick="adjust('walk',5)">+</button>
         </div>
         <div style="display:flex;gap:6px;margin-top:4px;">
-          <button class="pill-btn" onclick="adjust('walk',15)" style="padding:6px;font-size:11px;flex:1">+15s</button>
           <button class="pill-btn" onclick="adjust('walk',-15)" style="padding:6px;font-size:11px;flex:1">−15s</button>
+          <button class="pill-btn" onclick="adjust('walk',15)" style="padding:6px;font-size:11px;flex:1">+15s</button>
         </div>
       </div>
     </div>
@@ -300,21 +298,8 @@
       </div>
     </div>
   </div>
-  <div class="section-label">Music</div>
-  <div class="spotify-card" id="spotify-card">
-    <div id="spotify-connect-wrap">
-      <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Connect Spotify Premium. Volume ducks automatically during audio cues.</p>
-      <button class="spotify-connect-btn" onclick="spotifyLogin()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
-        Connect Spotify
-      </button>
-    </div>
-    <div class="spotify-status" id="spotify-status">
-      <div class="spotify-avatar-sm" id="spotify-avatar">🎵</div>
-      <div class="spotify-info"><div class="spotify-name" id="spotify-user-name">—</div><div class="spotify-connected-label">✓ Connected</div></div>
-      <button class="spotify-disconnect" onclick="spotifyDisconnect()">Disconnect</button>
-    </div>
-  </div>
+  <div class="section-label" style="margin-top:16px;">Presets</div>
+  <div style="margin-bottom:16px;"><div class="presets-scroll" id="presets-scroll"><button class="preset-chip add-chip" onclick="savePresetModal()">+ Save Current</button></div></div>
   <button class="primary-btn" onclick="startWorkout()" style="margin-top:auto;">START WORKOUT</button>
 </div>
 
@@ -383,7 +368,23 @@
     <div class="preset-list" id="preset-list"><p style="color:var(--muted);font-size:13px;">No presets saved yet.</p></div>
     <div style="margin-top:12px;"><button class="primary-btn secondary" onclick="savePresetModal()">+ Save Current Settings as Preset</button></div>
 
-    <div style="margin-top:auto;padding-top:32px;">
+    <div class="section-label" style="margin-top:24px;">Music</div>
+    <div class="spotify-card" id="spotify-card">
+      <div id="spotify-connect-wrap">
+        <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Connect Spotify Premium. Volume ducks automatically during audio cues.</p>
+        <button class="spotify-connect-btn" onclick="spotifyLogin()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+          Connect Spotify
+        </button>
+      </div>
+      <div class="spotify-status" id="spotify-status">
+        <div class="spotify-avatar-sm" id="spotify-avatar">🎵</div>
+        <div class="spotify-info"><div class="spotify-name" id="spotify-user-name">—</div><div class="spotify-connected-label">✓ Connected</div></div>
+        <button class="spotify-disconnect" onclick="spotifyDisconnect()">Disconnect</button>
+      </div>
+    </div>
+
+    <div style="margin-top:16px;padding-bottom:8px;">
       <button class="primary-btn secondary" onclick="confirmSignOut()" style="color:var(--run);border:2px solid rgba(255,77,46,0.2);">Sign Out</button>
     </div>
   </div>
