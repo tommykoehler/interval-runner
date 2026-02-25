@@ -365,50 +365,64 @@
   <div class="profile-header">
     <button class="icon-btn" onclick="showScreen('setup')">←</button>
     <div class="profile-header-title">PROFILE</div>
-    <button class="icon-btn" onclick="confirmSignOut()" title="Sign out" style="font-size:16px;">↪</button>
+    <button class="icon-btn" id="edit-profile-btn" onclick="openEditProfile()" style="font-size:13px;font-weight:600;width:auto;padding:0 14px;font-family:'DM Sans',sans-serif;">Edit</button>
   </div>
 
-  <!-- Avatar -->
-  <div class="profile-avatar-wrap">
-    <div class="profile-avatar-large" id="profile-avatar-large" onclick="document.getElementById('avatar-file-input').click()">
-      <span id="profile-avatar-initial">👤</span>
-      <div class="avatar-edit-overlay">✏️</div>
+  <!-- VIEW MODE -->
+  <div id="profile-view">
+    <div class="profile-avatar-wrap">
+      <div class="profile-avatar-large" id="profile-avatar-large">
+        <span id="profile-avatar-initial">👤</span>
+      </div>
+      <div id="profile-view-name" style="font-size:20px;font-weight:700;margin-top:10px;">—</div>
+      <div id="profile-view-location" style="font-size:13px;color:var(--muted);margin-top:4px;display:none;">📍 <span id="profile-view-location-text"></span></div>
+      <div id="profile-view-bio" style="font-size:14px;color:var(--muted);margin-top:8px;text-align:center;line-height:1.5;max-width:280px;display:none;"></div>
     </div>
-    <div class="avatar-source-row">
-      <button class="avatar-source-btn" onclick="document.getElementById('avatar-file-input').click()">📁 Upload Photo</button>
-      <button class="avatar-source-btn" onclick="document.getElementById('avatar-camera-input').click()">📷 Take Photo</button>
-    </div>
-    <input type="file" id="avatar-file-input" accept="image/*" style="display:none" onchange="handleAvatarFile(this)"/>
-    <input type="file" id="avatar-camera-input" accept="image/*" capture="user" style="display:none" onchange="handleAvatarFile(this)"/>
-    <div class="upload-progress" id="upload-progress"><div class="upload-bar" id="upload-bar"></div></div>
-  </div>
 
-  <!-- Editable Fields -->
-  <div class="section-label">About You</div>
-  <div class="profile-fields">
-    <div class="profile-field">
-      <div class="profile-field-icon">👤</div>
-      <input type="text" id="profile-name-input" placeholder="Display name"/>
-    </div>
-    <div class="profile-field">
-      <div class="profile-field-icon">📍</div>
-      <input type="text" id="profile-location-input" placeholder="City, State"/>
-      <button class="location-detect-btn" id="location-detect-btn" onclick="detectLocation()" title="Auto-detect location">🎯</button>
-    </div>
-    <div class="bio-wrap">
-      <div class="bio-label">Bio</div>
-      <textarea id="profile-bio-input" placeholder="Tell us about your running journey..." rows="3"></textarea>
-    </div>
-  </div>
-
-  <button class="profile-save-btn" id="profile-save-btn" onclick="saveProfile()">SAVE PROFILE</button>
-
-  <div style="margin-top:24px;">
-    <div class="section-label">Saved Presets</div>
+    <div class="section-label" style="margin-top:8px;">Saved Presets</div>
     <div class="preset-list" id="preset-list"><p style="color:var(--muted);font-size:13px;">No presets saved yet.</p></div>
     <div style="margin-top:12px;"><button class="primary-btn secondary" onclick="savePresetModal()">+ Save Current Settings as Preset</button></div>
+
+    <div style="margin-top:auto;padding-top:32px;">
+      <button class="primary-btn secondary" onclick="confirmSignOut()" style="color:var(--run);border:2px solid rgba(255,77,46,0.2);">Sign Out</button>
+    </div>
   </div>
-  <div style="margin-top:16px;"><button class="primary-btn secondary" onclick="confirmSignOut()" style="color:var(--run);border:2px solid rgba(255,77,46,0.3);">Sign Out</button></div>
+
+  <!-- EDIT MODE (hidden by default) -->
+  <div id="profile-edit" style="display:none;">
+    <div class="profile-avatar-wrap">
+      <div class="profile-avatar-large" id="profile-avatar-edit" onclick="document.getElementById('avatar-file-input').click()">
+        <span id="profile-avatar-edit-initial">👤</span>
+        <div class="avatar-edit-overlay">✏️</div>
+      </div>
+      <div class="avatar-source-row">
+        <button class="avatar-source-btn" onclick="document.getElementById('avatar-file-input').click()">📁 Upload</button>
+        <button class="avatar-source-btn" onclick="document.getElementById('avatar-camera-input').click()">📷 Camera</button>
+      </div>
+      <input type="file" id="avatar-file-input" accept="image/*" style="display:none" onchange="handleAvatarFile(this)"/>
+      <input type="file" id="avatar-camera-input" accept="image/*" capture="user" style="display:none" onchange="handleAvatarFile(this)"/>
+      <div class="upload-progress" id="upload-progress"><div class="upload-bar" id="upload-bar"></div></div>
+    </div>
+
+    <div class="section-label">About You</div>
+    <div class="profile-fields">
+      <div class="profile-field">
+        <div class="profile-field-icon">👤</div>
+        <input type="text" id="profile-name-input" placeholder="Display name"/>
+      </div>
+      <div class="profile-field">
+        <div class="profile-field-icon">📍</div>
+        <input type="text" id="profile-location-input" placeholder="City, State"/>
+        <button class="location-detect-btn" id="location-detect-btn" onclick="detectLocation()" title="Auto-detect">🎯</button>
+      </div>
+      <div class="bio-wrap">
+        <div class="bio-label">Bio</div>
+        <textarea id="profile-bio-input" placeholder="Tell us about your running journey..." rows="3"></textarea>
+      </div>
+    </div>
+
+    <button class="profile-save-btn" id="profile-save-btn" onclick="saveProfile()">SAVE PROFILE</button>
+  </div>
 </div>
 
 <!-- ══════════ DONE ══════════ -->
@@ -510,8 +524,8 @@ onAuthStateChanged(auth, async user => {
   document.getElementById('loading').style.display = 'none';
   if(user) {
     updateAvatarBtn(user);
-    await loadUserData(user.uid);
     populateProfileFields(user);
+    await loadUserData(user.uid);
     showScreen('setup');
   } else {
     if(isSignInWithEmailLink(auth, window.location.href)) {
@@ -616,22 +630,64 @@ function updateAvatarBtn(user) {
   }
 }
 
-function populateProfileFields(user) {
+// ── PROFILE VIEW / EDIT MODES ──
+function updateProfileView(user, extraData) {
+  const name = user.displayName || user.email || 'Runner';
+  const photo = user.photoURL;
+  const location = extraData?.location || '';
+  const bio = extraData?.bio || '';
+
+  // View mode
+  document.getElementById('profile-view-name').textContent = name;
+  const locEl = document.getElementById('profile-view-location');
+  const locText = document.getElementById('profile-view-location-text');
+  if(location) { locText.textContent = location; locEl.style.display = 'block'; } else { locEl.style.display = 'none'; }
+  const bioEl = document.getElementById('profile-view-bio');
+  if(bio) { bioEl.textContent = bio; bioEl.style.display = 'block'; } else { bioEl.style.display = 'none'; }
+
+  // Avatar in view mode
+  const avatarEl = document.getElementById('profile-avatar-large');
+  const avatarInitial = document.getElementById('profile-avatar-initial');
+  if(photo) { avatarEl.innerHTML = `<img src="${photo}" alt=""/>`; }
+  else { avatarInitial.textContent = name[0].toUpperCase(); }
+
+  // Edit mode fields
   document.getElementById('profile-name-input').value = user.displayName || '';
-  document.getElementById('profile-avatar-initial').textContent = user.photoURL ? '' : (user.displayName || user.email || 'R')[0].toUpperCase();
-  if(user.photoURL) {
-    document.getElementById('profile-avatar-large').innerHTML = `<img src="${user.photoURL}" alt=""/><div class="avatar-edit-overlay">✏️</div>`;
-    document.getElementById('profile-avatar-large').onclick = () => document.getElementById('avatar-file-input').click();
-  }
+  document.getElementById('profile-location-input').value = location;
+  document.getElementById('profile-bio-input').value = bio;
+
+  // Avatar in edit mode
+  const avatarEdit = document.getElementById('profile-avatar-edit');
+  const avatarEditInitial = document.getElementById('profile-avatar-edit-initial');
+  if(photo) { avatarEdit.innerHTML = `<img src="${photo}" alt=""/><div class="avatar-edit-overlay">✏️</div>`; }
+  else { avatarEditInitial.textContent = name[0].toUpperCase(); }
 }
+
+function populateProfileFields(user) {
+  updateProfileView(user, null);
+}
+
+window.openEditProfile = () => {
+  document.getElementById('profile-view').style.display = 'none';
+  document.getElementById('profile-edit').style.display = 'block';
+  document.getElementById('edit-profile-btn').textContent = 'Cancel';
+  document.getElementById('edit-profile-btn').onclick = closeEditProfile;
+};
+
+window.closeEditProfile = () => {
+  document.getElementById('profile-view').style.display = 'block';
+  document.getElementById('profile-edit').style.display = 'none';
+  document.getElementById('edit-profile-btn').textContent = 'Edit';
+  document.getElementById('edit-profile-btn').onclick = openEditProfile;
+};
 
 async function loadUserData(uid) {
   try {
     const snap = await getDoc(doc(db, 'users', uid));
     if(snap.exists()) {
       const d = snap.data();
-      if(d.location) document.getElementById('profile-location-input').value = d.location;
-      if(d.bio) document.getElementById('profile-bio-input').value = d.bio;
+      window._extraProfileData = d;
+      if(currentUser) updateProfileView(currentUser, d);
       if(d.defaultPreset) applyPreset(d.defaultPreset);
     }
     await loadPresets(uid);
@@ -755,9 +811,15 @@ window.saveProfile = async () => {
       }
       await setDoc(doc(db, 'users', currentUser.uid), { displayName: name, location, bio }, { merge: true });
     }
+    // Update view mode immediately
+    window._extraProfileData = { ...(window._extraProfileData||{}), displayName: name, location, bio };
+    if(currentUser) updateProfileView(currentUser, window._extraProfileData);
     btn.textContent = 'SAVED ✓';
     btn.style.background = 'var(--walk)';
-    setTimeout(() => { btn.textContent = 'SAVE PROFILE'; btn.style.background = 'var(--run)'; btn.disabled = false; }, 2000);
+    setTimeout(() => {
+      btn.textContent = 'SAVE PROFILE'; btn.style.background = 'var(--run)'; btn.disabled = false;
+      closeEditProfile();
+    }, 1200);
   } catch(e) {
     btn.textContent = 'SAVE PROFILE'; btn.disabled = false;
     alert('Could not save. Please try again.');
