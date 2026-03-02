@@ -12,6 +12,7 @@
     --text: #F5F5F0; --muted: #888; --spotify: #1DB954; --radius: 20px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+  .feather { display: block; }
   body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100dvh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
   .screen { width: 100%; max-width: 430px; min-height: 100dvh; padding: 0 20px 40px; display: none; flex-direction: column; }
   .screen.active { display: flex; }
@@ -267,7 +268,7 @@
 <div class="screen" id="setup">
   <div class="setup-header">
     <div class="header-actions" style="margin-left:auto;">
-      <button class="avatar-btn" id="avatar-btn" onclick="showScreen('profile')">👤</button>
+      <button class="avatar-btn" id="avatar-btn" onclick="showScreen('profile')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></button>
     </div>
   </div>
   <div class="section-label">Interval Timing</div>
@@ -328,12 +329,12 @@
       </div>
     </div>
     <div class="np-controls-row">
-      <button class="np-side-btn" onclick="spotifyPrev()"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
+      <button class="np-side-btn" onclick="spotifyPrev()"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-skip-back"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5"></line></svg></button>
       <button class="np-play-btn" id="setup-np-play-pause" onclick="spotifyPlayPause()">
-        <svg id="setup-np-play-icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-        <svg id="setup-np-pause-icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        <span id="setup-np-play-icon"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-play"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg></span>
+        <span id="setup-np-pause-icon" style="display:none"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-pause"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg></span>
       </button>
-      <button class="np-side-btn" onclick="spotifyNext()"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
+      <button class="np-side-btn" onclick="spotifyNext()"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-skip-forward"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg></button>
     </div>
   </div>
   <button class="primary-btn" onclick="startWorkout()">START WORKOUT</button>
@@ -342,7 +343,7 @@
 <!-- ══════════ TIMER ══════════ -->
 <div class="screen" id="timer">
   <div class="timer-header">
-    <button class="icon-btn" onclick="stopWorkout()">←</button>
+    <button class="icon-btn" onclick="stopWorkout()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg></button>
     <span class="round-badge" id="round-display">ROUND 1 / 8</span>
     <div style="width:44px"></div>
   </div>
@@ -366,36 +367,34 @@
       <div class="np-info"><div class="np-track" id="np-track">Not playing</div><div class="np-artist" id="np-artist">—</div></div>
     </div>
     <div class="np-controls-row">
-      <button class="np-side-btn" onclick="spotifyPrev()"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
+      <button class="np-side-btn" onclick="spotifyPrev()"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-skip-back"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5"></line></svg></button>
       <button class="np-play-btn" id="np-play-pause" onclick="spotifyPlayPause()">
-        <svg id="np-play-icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-        <svg id="np-pause-icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        <span id="np-play-icon"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-play"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg></span>
+        <span id="np-pause-icon" style="display:none"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-pause"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg></span>
       </button>
-      <button class="np-side-btn" onclick="spotifyNext()"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
+      <button class="np-side-btn" onclick="spotifyNext()"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-skip-forward"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg></button>
     </div>
   </div>
   <div class="controls">
     <button class="ctrl-btn ctrl-secondary" onclick="skipPhase()" style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.5px;">SKIP<br>SET</button>
     <button class="ctrl-btn" id="play-pause-btn" onclick="togglePause()">PAUSE</button>
-    <button class="ctrl-btn ctrl-secondary" onclick="confirmStop()">✕</button>
+    <button class="ctrl-btn ctrl-secondary" onclick="confirmStop()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
   </div>
 </div>
 
 <!-- ══════════ PROFILE ══════════ -->
 <div class="screen" id="profile">
   <div class="profile-header">
-    <button class="icon-btn" onclick="showScreen('setup')">←</button>
+    <button class="icon-btn" onclick="showScreen('setup')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg></button>
     <div class="profile-header-title">PROFILE</div>
-    <button class="icon-btn" onclick="showScreen('settings')" title="Settings">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-    </button>
+    <button class="icon-btn" onclick="showScreen('settings')" title="Settings"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-settings"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></button>
   </div>
 
   <!-- VIEW MODE -->
   <div id="profile-view">
     <div class="profile-avatar-wrap">
       <div class="profile-avatar-large" id="profile-avatar-large">
-        <span id="profile-avatar-initial">👤</span>
+        <span id="profile-avatar-initial"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>
       </div>
       <div id="profile-view-name" style="font-size:20px;font-weight:700;margin-top:10px;">—</div>
       <div id="profile-view-location" style="font-size:13px;color:var(--muted);margin-top:4px;display:none;">📍 <span id="profile-view-location-text"></span></div>
@@ -432,12 +431,12 @@
   <div id="profile-edit" style="display:none;">
     <div class="profile-avatar-wrap">
       <div class="profile-avatar-large" id="profile-avatar-edit" onclick="document.getElementById('avatar-file-input').click()">
-        <span id="profile-avatar-edit-initial">👤</span>
-        <div class="avatar-edit-overlay">✏️</div>
+        <span id="profile-avatar-edit-initial"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>
+        <div class="avatar-edit-overlay"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div>
       </div>
       <div class="avatar-source-row">
-        <button class="avatar-source-btn" onclick="document.getElementById('avatar-file-input').click()">📁 Upload</button>
-        <button class="avatar-source-btn" onclick="document.getElementById('avatar-camera-input').click()">📷 Camera</button>
+        <button class="avatar-source-btn" onclick="document.getElementById('avatar-file-input').click()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-upload"><polyline points="16 16 12 12 8 16"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path></svg> Upload</button>
+        <button class="avatar-source-btn" onclick="document.getElementById('avatar-camera-input').click()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-camera"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg> Camera</button>
       </div>
       <input type="file" id="avatar-file-input" accept="image/*" style="display:none" onchange="handleAvatarFile(this)"/>
       <input type="file" id="avatar-camera-input" accept="image/*" capture="user" style="display:none" onchange="handleAvatarFile(this)"/>
@@ -447,13 +446,13 @@
     <div class="section-label">About You</div>
     <div class="profile-fields">
       <div class="profile-field">
-        <div class="profile-field-icon">👤</div>
+        <div class="profile-field-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
         <input type="text" id="profile-name-input" placeholder="Display name"/>
       </div>
       <div class="profile-field">
         <div class="profile-field-icon">📍</div>
         <input type="text" id="profile-location-input" placeholder="City, State"/>
-        <button class="location-detect-btn" id="location-detect-btn" onclick="detectLocation()" title="Auto-detect">🎯</button>
+        <button class="location-detect-btn" id="location-detect-btn" onclick="detectLocation()" title="Auto-detect"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-map-pin"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></button>
       </div>
       <div class="bio-wrap">
         <div class="bio-label">Bio</div>
@@ -555,6 +554,7 @@
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
 <script type="module">
@@ -744,7 +744,7 @@ function updateProfileView(user, extraData) {
   // Avatar in edit mode
   const avatarEdit = document.getElementById('profile-avatar-edit');
   const avatarEditInitial = document.getElementById('profile-avatar-edit-initial');
-  if(photo) { avatarEdit.innerHTML = `<img src="${photo}" alt=""/><div class="avatar-edit-overlay">✏️</div>`; }
+  if(photo) { avatarEdit.innerHTML = `<img src="${photo}" alt=""/><div class="avatar-edit-overlay"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div>`; }
   else { avatarEditInitial.textContent = name[0].toUpperCase(); }
 }
 
@@ -840,7 +840,7 @@ window.confirmCrop = async () => {
       progress.classList.remove('visible');
 
       const avatarEl = document.getElementById('profile-avatar-large');
-      avatarEl.innerHTML = `<img src="${url}" alt=""/><div class="avatar-edit-overlay">✏️</div>`;
+      avatarEl.innerHTML = `<img src="${url}" alt=""/><div class="avatar-edit-overlay"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></div>`;
       avatarEl.onclick = () => document.getElementById('avatar-file-input').click();
 
       if(currentUser) {
@@ -957,8 +957,8 @@ function renderPresets() {
       </div>
       <div class="preset-item-actions">
         <button class="preset-action-btn" onclick="applyPresetAndGo('${p.id}')" title="Load">▶</button>
-        ${!p.isDefault?`<button class="preset-action-btn" onclick="setDefaultPreset('${p.id}')" title="Set default">★</button>`:''}
-        <button class="preset-action-btn delete" onclick="deletePreset('${p.id}')" title="Delete">🗑</button>
+        ${!p.isDefault?`<button class="preset-action-btn" onclick="setDefaultPreset('${p.id}')" title="Set default"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button>`:''}
+        <button class="preset-action-btn delete" onclick="deletePreset('${p.id}')" title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path></svg></button>
       </div>`;
     list.appendChild(item);
   });
@@ -1255,7 +1255,57 @@ window._mode='rounds'; if(!window._presets) window._presets=[];
 // ── TIMER ──
 const T={runSec:0,walkSec:0,phase:'run',round:1,maxRounds:0,phaseLeft:0,totalLeft:0,paused:false,timer:null,elapsed:0,runAccum:0,walkAccum:0};
 
-window.startWorkout=()=>{ensureAudio();T.runSec=getTimeSec('run');T.walkSec=getTimeSec('walk');T.phase='run';T.round=1;T.paused=false;T.elapsed=T.runAccum=T.walkAccum=0;if(window._mode==='rounds'){T.maxRounds=parseInt(document.getElementById('rounds-val').textContent);T.totalLeft=T.maxRounds*(T.runSec+T.walkSec);}else{T.totalLeft=parseInt(document.getElementById('total-time-val').textContent)*60;T.maxRounds=Math.floor(T.totalLeft/(T.runSec+T.walkSec));}T.phaseLeft=T.runSec;showScreen('timer');updateUI();playRunCue();if(sp.connected&&!sp.isPlaying)spAPI('/me/player/play','PUT');T.timer=setInterval(tick,1000);};
+// ── WAKE LOCK ──
+let _wakeLock = null;
+async function requestWakeLock() {
+  try {
+    if('wakeLock' in navigator) {
+      _wakeLock = await navigator.wakeLock.request('screen');
+    }
+  } catch(e) { console.warn('Wake lock failed:', e); }
+}
+async function releaseWakeLock() {
+  try { if(_wakeLock) { await _wakeLock.release(); _wakeLock = null; } }
+  catch(e) {}
+}
+
+// Re-acquire wake lock when tab becomes visible again (iOS Safari releases it on hide)
+document.addEventListener('visibilitychange', async () => {
+  if(document.visibilityState === 'visible' && T.timer && !T.paused) {
+    await requestWakeLock();
+    // Catch-up: calculate how much time passed while hidden
+    if(T._hiddenAt) {
+      const elapsed = Math.floor((Date.now() - T._hiddenAt) / 1000);
+      T._hiddenAt = null;
+      if(elapsed > 0) {
+        for(let i = 0; i < elapsed; i++) {
+          if(!T.timer) break;
+          T.phaseLeft--;
+          T.totalLeft = Math.max(0, T.totalLeft - 1);
+          T.elapsed++;
+          T.phase === 'run' ? T.runAccum++ : T.walkAccum++;
+          if(T.phaseLeft <= 0) { nextPhase(); break; }
+          if(T.totalLeft <= 0) { finishWorkout(); return; }
+        }
+        updateUI();
+      }
+    }
+  } else if(document.visibilityState === 'hidden' && T.timer && !T.paused) {
+    T._hiddenAt = Date.now();
+  }
+});
+
+window.startWorkout=()=>{
+  ensureAudio();
+  T.runSec=getTimeSec('run');T.walkSec=getTimeSec('walk');T.phase='run';T.round=1;T.paused=false;T.elapsed=T.runAccum=T.walkAccum=0;T._hiddenAt=null;
+  if(window._mode==='rounds'){T.maxRounds=parseInt(document.getElementById('rounds-val').textContent);T.totalLeft=T.maxRounds*(T.runSec+T.walkSec);}
+  else{T.totalLeft=parseInt(document.getElementById('total-time-val').textContent)*60;T.maxRounds=Math.floor(T.totalLeft/(T.runSec+T.walkSec));}
+  T.phaseLeft=T.runSec;
+  showScreen('timer');updateUI();playRunCue();
+  if(sp.connected&&!sp.isPlaying)spAPI('/me/player/play','PUT');
+  requestWakeLock();
+  T.timer=setInterval(tick,1000);
+};
 
 function tick(){if(T.paused)return;T.phaseLeft--;T.totalLeft=Math.max(0,T.totalLeft-1);T.elapsed++;T.phase==='run'?T.runAccum++:T.walkAccum++;if(T.phaseLeft<=3&&T.phaseLeft>0)playCountdown();if(T.phaseLeft<=0){nextPhase();return;}if(T.totalLeft<=0){finishWorkout();return;}updateUI();}
 
@@ -1270,10 +1320,12 @@ window.confirmStop=()=>{
 };
 window.stopWorkout=()=>{
   document.getElementById('stop-confirm-modal').classList.remove('open');
-  clearInterval(T.timer);T.timer=null;speechSynthesis?.cancel();showScreen('setup');
+  clearInterval(T.timer);T.timer=null;speechSynthesis?.cancel();
+  releaseWakeLock();
+  showScreen('setup');
 };
 
-window.finishWorkout = function finishWorkout(){document.getElementById('stop-confirm-modal').classList.remove('open');clearInterval(T.timer);T.timer=null;playDone();document.getElementById('done-rounds').textContent=T.round-1;document.getElementById('done-time').textContent=fmtTime(T.elapsed);document.getElementById('done-run').textContent=fmtTime(T.runAccum);document.getElementById('done-walk').textContent=fmtTime(T.walkAccum);showScreen('done');}
+window.finishWorkout = function finishWorkout(){document.getElementById('stop-confirm-modal').classList.remove('open');clearInterval(T.timer);T.timer=null;releaseWakeLock();playDone();document.getElementById('done-rounds').textContent=T.round-1;document.getElementById('done-time').textContent=fmtTime(T.elapsed);document.getElementById('done-run').textContent=fmtTime(T.runAccum);document.getElementById('done-walk').textContent=fmtTime(T.walkAccum);showScreen('done');}
 function fmtTime(s){const m=Math.floor(s/60);return m>0?m+'m '+pad(s%60)+'s':s+'s';}
 
 function updateUI(){const run=T.phase==='run',col=run?'var(--run)':'var(--walk)';document.getElementById('phase-label').textContent=run?'RUN':'WALK';document.getElementById('phase-label').style.color=col;document.getElementById('big-time').textContent=pad(Math.floor(T.phaseLeft/60))+':'+pad(T.phaseLeft%60);const nN=run?'WALK':'RUN',nS=run?T.walkSec:T.runSec;document.getElementById('next-label').textContent=`next: ${nN} ${pad(Math.floor(nS/60))}:${pad(nS%60)}`;document.getElementById('round-display').textContent=`ROUND ${T.round} / ${window._mode==='rounds'?T.maxRounds:'∞'}`;document.getElementById('total-remaining').textContent=`TOTAL: ${pad(Math.floor(T.totalLeft/60))}:${pad(T.totalLeft%60)}`;const r=106,circ=2*Math.PI*r,total=run?T.runSec:T.walkSec,pc=document.getElementById('progress-circle');pc.style.strokeDasharray=circ;pc.style.strokeDashoffset=circ*(1-T.phaseLeft/total);pc.style.stroke=col;document.getElementById('play-pause-btn').style.background=col;}
