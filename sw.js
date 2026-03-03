@@ -1,11 +1,7 @@
-const CACHE = 'interval-runner-v1';
-const ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json'
-];
+// Auto-busting cache version — update this timestamp on each deploy
+const CACHE = 'interval-runner-' + '{{BUILD_TIME}}';
+const ASSETS = ['/', '/index.html', '/manifest.json', '/icon-192.png', '/icon-512.png'];
 
-// Install — cache core assets
 self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(CACHE).then(cache => cache.addAll(ASSETS))
@@ -13,7 +9,6 @@ self.addEventListener('install', e => {
   self.skipWaiting();
 });
 
-// Activate — clean old caches
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
@@ -23,22 +18,33 @@ self.addEventListener('activate', e => {
   self.clients.claim();
 });
 
-// Fetch — serve from cache, fall back to network
+// Network first, fall back to cache
+// This means updates show immediately, cache is just for offline
 self.addEventListener('fetch', e => {
+  // Skip non-GET and cross-origin requests
+  if(e.request.method !== 'GET') return;
+  if(!e.request.url.startsWith(self.location.origin)) return;
+
   e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request))
+    fetch(e.request)
+      .then(response => {
+        // Cache a copy of the fresh response
+        const clone = response.clone();
+        caches.open(CACHE).then(cache => cache.put(e.request, clone));
+        return response;
+      })
+      .catch(() => caches.match(e.request))
   );
 });
 
-// Push notification handler (for future use)
 self.addEventListener('notificationclick', e => {
   e.notification.close();
   e.waitUntil(
     clients.matchAll({ type: 'window' }).then(clientList => {
-      for (const client of clientList) {
-        if (client.url === '/' && 'focus' in client) return client.focus();
+      for(const client of clientList) {
+        if(client.url === '/' && 'focus' in client) return client.focus();
       }
-      if (clients.openWindow) return clients.openWindow('/');
+      if(clients.openWindow) return clients.openWindow('/');
     })
   );
 });
