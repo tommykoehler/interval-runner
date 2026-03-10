@@ -7,64 +7,73 @@
 
 <!-- PWA -->
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#0D0D0D">
+<meta name="theme-color" content="#090b0f">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Interval Runner">
 <link rel="apple-touch-icon" href="/icon-192.png">
 
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600&family=Fira+Sans+Condensed:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --run: #FF4D2E; --walk: #2ECC8A; --bg: #0D0D0D;
-    --surface: #1A1A1A; --surface2: #242424; --surface3: #2E2E2E;
-    --text: #F5F5F0; --muted: #888; --spotify: #1DB954; --radius: 20px;
+    --run: #d54309; --walk: #2ecc8a; --bg: #0f131a;
+    --surface: #1d2533; --surface2: #28303d; --surface3: #343b47;
+    --text: #ffffff; --muted: #6c717a; --muted2: #bbbec2; --spotify: #1db954; --radius: 28px;
+    --border: rgba(108,113,122,0.5);
+    --run-transparent: rgba(213, 67, 9, 0.1);
+    --walk-transparent: rgba(46, 204, 138, 0.1);
+    --surface-transparent: rgba(210, 211, 214, 0.1);
+    --font-heading: 'Fira Sans', sans-serif;
+    --font-heading-condensed: 'Fira Sans Condensed', sans-serif;
+    --font-body: 'Inter', sans-serif;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
   .feather { display: block; }
-  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100dvh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
+  body { background: linear-gradient(160deg, rgba(9,33,17,1) 0%, rgba(15,19,26,1) 30%, rgba(15,19,26,1) 65%, rgba(45,24,15,1) 100%) fixed; color: var(--text); font-family: var(--font-body); min-height: 100dvh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
   .screen { width: 100%; max-width: 430px; min-height: 100dvh; padding: 0 20px 40px; display: none; flex-direction: column; }
   .screen.active { display: flex; }
 
   /* ── SHARED ── */
   .section-label { font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
-  .card { background: var(--surface); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; }
   .time-picker { display: flex; align-items: center; background: var(--surface2); border-radius: 12px; overflow: hidden; height: 52px; }
   .time-picker button { background: none; border: none; color: var(--text); font-size: 22px; width: 44px; height: 100%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
   .time-picker button:active { background: rgba(255,255,255,0.08); }
-  .time-picker .time-val { flex: 1; text-align: center; font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 1px; user-select: none; }
-  .pill-btn { background: var(--surface2); border: 2px solid transparent; border-radius: 12px; color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; padding: 12px; cursor: pointer; transition: all 0.2s; text-align: center; }
+  .time-picker .time-val { flex: 1; text-align: center; font-family: var(--font-heading); font-size: 24px; font-weight: 500; letter-spacing: 1px; user-select: none; color: var(--text); }
+  .pill-btn { background: var(--surface); border: 1px solid var(--border); border-radius: 100px; color: var(--muted2); font-family: var(--font-body); font-size: 13px; font-weight: 500; padding: 8px 16px; cursor: pointer; transition: all 0.2s; text-align: center; white-space: nowrap; }
   .pill-btn.active { border-color: var(--run); color: var(--text); background: rgba(255,77,46,0.1); }
-  .primary-btn { width: 100%; padding: 20px; background: var(--run); border: none; border-radius: var(--radius); color: white; font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 3px; cursor: pointer; transition: transform 0.1s, opacity 0.1s; }
+  .primary-btn { width: 100%; height: 64px; padding: 0 24px; background: var(--run); border: none; border-radius: 100px; color: white; font-family: var(--font-heading); font-size: 20px; font-weight: 500; letter-spacing: 2px; cursor: pointer; transition: transform 0.1s, opacity 0.1s; }
   .primary-btn:active { transform: scale(0.97); opacity: 0.9; }
   .primary-btn.secondary { background: var(--surface2); color: var(--text); font-size: 16px; letter-spacing: 1px; }
   .icon-btn { background: var(--surface); border: none; color: var(--text); border-radius: 12px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; transition: background 0.15s; }
   .icon-btn:active { background: var(--surface2); }
-  input[type="email"], input[type="password"], input[type="text"], input[type="tel"] { width: 100%; padding: 16px; background: var(--surface2); border: 2px solid transparent; border-radius: 14px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; outline: none; transition: border-color 0.2s; margin-bottom: 12px; }
+  input[type="email"], input[type="password"], input[type="text"], input[type="tel"] { width: 100%; padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; color: var(--text); font-family: var(--font-body); font-size: 15px; outline: none; transition: border-color 0.2s; margin-bottom: 12px; }
   input:focus { border-color: var(--run); }
   input::placeholder { color: var(--muted); }
-  textarea { width: 100%; padding: 14px 16px; background: var(--surface2); border: 2px solid transparent; border-radius: 14px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; outline: none; transition: border-color 0.2s; resize: none; min-height: 80px; line-height: 1.5; display: block; }
+  textarea { width: 100%; padding: 14px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; color: var(--text); font-family: var(--font-body); font-size: 15px; outline: none; transition: border-color 0.2s; resize: none; min-height: 80px; line-height: 1.5; display: block; }
   textarea:focus { border-color: var(--run); }
   textarea::placeholder { color: var(--muted); }
   .divider { display: flex; align-items: center; gap: 12px; margin: 16px 0; color: var(--muted); font-size: 13px; }
   .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--surface2); }
-  .social-btn { width: 100%; padding: 16px; background: var(--surface2); border: none; border-radius: 14px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; transition: background 0.15s; }
+  .social-btn { width: 100%; padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; color: var(--text); font-family: var(--font-body); font-size: 15px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; transition: background 0.15s; }
   .social-btn:active { background: var(--surface3); }
-  .text-link { background: none; border: none; color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; text-decoration: underline; padding: 0; }
+  .text-link { background: none; border: none; color: var(--muted); font-family: var(--font-body); font-size: 13px; cursor: pointer; text-decoration: underline; padding: 0; }
   .text-link:hover { color: var(--text); }
   .error-msg { color: var(--run); font-size: 13px; margin-bottom: 12px; display: none; }
   .success-msg { color: var(--walk); font-size: 13px; margin-bottom: 12px; display: none; }
 
   /* ── AUTH ── */
   #auth { padding-top: 80px; }
-  .auth-title { font-family: 'Bebas Neue', sans-serif; font-size: 52px; letter-spacing: 3px; line-height: 1; margin-bottom: 4px; }
+  .auth-title { font-family: var(--font-heading); font-size: 52px; letter-spacing: 3px; line-height: 1; margin-bottom: 4px; }
   .auth-subtitle { color: var(--muted); font-size: 14px; font-weight: 300; margin-bottom: 40px; }
   .auth-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 24px; }
 
   /* ── SETUP ── */
   #setup { padding-top: 0; }
   .setup-header { display: flex; align-items: center; justify-content: space-between; padding: 56px 0 24px; }
-  .app-title { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 2px; line-height: 1; }
+  .app-title { font-family: var(--font-heading); font-size: 36px; letter-spacing: 2px; line-height: 1; }
   .header-actions { display: flex; gap: 8px; }
   .avatar-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--surface); border: none; cursor: pointer; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 18px; }
   .avatar-btn img { width: 100%; height: 100%; object-fit: cover; }
@@ -81,7 +90,7 @@
   .preset-chip.add-chip { color: var(--run); border-color: rgba(255,77,46,0.3); }
   .spotify-card { background: var(--surface); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; border: 1px solid transparent; transition: border-color 0.3s; }
   .spotify-card.connected { border-color: rgba(29,185,84,0.3); }
-  .spotify-connect-btn { width: 100%; padding: 16px; background: var(--spotify); border: none; border-radius: 14px; color: #000; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .spotify-connect-btn { width: 100%; padding: 16px; background: var(--spotify); border: none; border-radius: 14px; color: #000; font-family: var(--font-body); font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
   .spotify-status { display: none; align-items: center; gap: 12px; }
   .spotify-status.visible { display: flex; }
   .spotify-avatar-sm { width: 36px; height: 36px; border-radius: 50%; background: var(--surface2); overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
@@ -94,17 +103,17 @@
   /* ── TIMER ── */
   #timer { padding-top: 0; justify-content: space-between; }
   .timer-header { display: flex; align-items: center; justify-content: space-between; padding: 56px 0 16px; }
-  .round-badge { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 2px; color: var(--muted); }
+  .round-badge { font-family: var(--font-heading); font-size: 14px; font-weight: 500; letter-spacing: 2px; color: var(--muted2); }
   .ring-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1; justify-content: center; }
-  .phase-label { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 4px; transition: color 0.4s; }
+  .phase-label { font-family: var(--font-heading-condensed); font-size: 32px; font-weight: 500; letter-spacing: 4px; transition: color 0.4s; text-transform: uppercase; }
   .ring-container { position: relative; width: 240px; height: 240px; }
   .ring-container svg { transform: rotate(-90deg); position: absolute; top: 0; left: 0; }
   #bg-circle { fill: none; stroke: var(--surface); stroke-width: 14; }
   #progress-circle { fill: none; stroke: var(--run); stroke-width: 14; stroke-linecap: round; transition: stroke-dashoffset 1s linear, stroke 0.4s; }
   .ring-inner { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .big-time { font-family: 'Bebas Neue', sans-serif; font-size: 72px; line-height: 1; letter-spacing: 2px; }
+  .big-time { font-family: var(--font-heading); font-size: 72px; line-height: 1; letter-spacing: 2px; }
   .next-label { font-size: 12px; color: var(--muted); margin-top: 4px; }
-  .total-remaining { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 2px; color: var(--muted); }
+  .total-remaining { font-family: var(--font-heading); font-size: 18px; letter-spacing: 2px; color: var(--muted); }
   .now-playing { background: var(--surface); border-radius: 18px; padding: 14px 16px; display: none; flex-direction: column; gap: 10px; margin: 8px 0; width: 100%; }
   .now-playing.visible { display: flex; }
   .np-track-row { display: flex; align-items: center; gap: 12px; }
@@ -122,12 +131,12 @@
   .ctrl-btn { height: 68px; border: none; border-radius: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 24px; transition: transform 0.1s; }
   .ctrl-btn:active { transform: scale(0.94); }
   .ctrl-secondary { background: var(--surface); color: var(--text); }
-  #play-pause-btn { background: var(--run); font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px; color: white; }
+  #play-pause-btn { background: var(--run); font-family: var(--font-heading); font-size: 18px; font-weight: 500; letter-spacing: 2px; color: white; border-radius: 100px; flex: 1; height: 64px; }
 
   /* ── PROFILE ── */
   #profile { padding-top: 0; overflow-y: auto; }
   .profile-header { display: flex; align-items: center; justify-content: space-between; padding: 56px 0 16px; }
-  .profile-header-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 2px; }
+  .profile-header-title { font-family: var(--font-heading); font-size: 28px; letter-spacing: 2px; }
 
   .profile-avatar-wrap { display: flex; flex-direction: column; align-items: center; padding: 8px 0 20px; }
   .profile-avatar-large { width: 90px; height: 90px; border-radius: 50%; background: var(--surface2); overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 36px; position: relative; cursor: pointer; margin-bottom: 10px; }
@@ -142,7 +151,7 @@
   .profile-field { display: flex; align-items: center; background: var(--surface2); border-radius: 14px; overflow: hidden; margin-bottom: 10px; min-height: 54px; border: 2px solid transparent; transition: border-color 0.2s; }
   .profile-field:focus-within { border-color: var(--run); }
   .profile-field-icon { width: 46px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--muted); flex-shrink: 0; }
-  .profile-field input { flex: 1; background: none; border: none; margin: 0; padding: 0 12px 0 0; border-radius: 0; height: 54px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; outline: none; }
+  .profile-field input { flex: 1; background: none; border: none; margin: 0; padding: 0 12px 0 0; border-radius: 0; height: 54px; color: var(--text); font-family: var(--font-body); font-size: 15px; outline: none; }
   .profile-field input:focus { border-color: transparent; }
   .profile-field input::placeholder { color: var(--muted); }
   .location-detect-btn { background: none; border: none; color: var(--muted); padding: 0 14px; cursor: pointer; font-size: 18px; flex-shrink: 0; transition: color 0.15s; }
@@ -160,7 +169,30 @@
   .upload-bar { height: 100%; background: var(--run); border-radius: 2px; transition: width 0.3s; width: 0%; }
 
   /* ── CROP MODAL ── */
-  /* ── DRUM PICKER ── */
+  /* ── SETTINGS ── */
+  .settings-group { margin-bottom: 28px; }
+  .settings-row { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid var(--border); gap: 16px; }
+  .settings-row:last-child { border-bottom: none; }
+  .settings-row-info { flex: 1; }
+  .settings-row-label { font-family: var(--font-body); font-size: 15px; font-weight: 500; color: var(--text); }
+  .settings-row-desc { font-size: 12px; color: var(--muted2); margin-top: 2px; }
+
+  /* Toggle switch */
+  .toggle { position: relative; width: 52px; height: 32px; flex-shrink: 0; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-track { position: absolute; inset: 0; background: var(--surface2); border: 1px solid var(--border); border-radius: 50px; cursor: pointer; transition: background 0.2s; }
+  .toggle input:checked + .toggle-track { background: var(--run); }
+  .toggle-thumb { position: absolute; top: 2px; left: 2px; width: 28px; height: 28px; background: var(--bg); border-radius: 50%; transition: transform 0.2s; pointer-events: none; }
+  .toggle input:checked ~ .toggle-thumb { transform: translateX(20px); background: white; }
+
+  /* Slider */
+  .settings-slider { width: 100%; -webkit-appearance: none; appearance: none; height: 4px; background: var(--surface3); border-radius: 2px; outline: none; margin-top: 10px; }
+  .settings-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--run); cursor: pointer; }
+  .settings-slider-row { flex-direction: column; align-items: flex-start; }
+  .settings-slider-labels { display: flex; justify-content: space-between; width: 100%; margin-top: 6px; }
+  .settings-slider-labels span { font-size: 11px; color: var(--muted); }
+
+  /* DRUM PICKER */
   .drum-col {
     flex: 1; height: 220px; overflow: hidden; position: relative;
     cursor: grab; z-index: 1; user-select: none;
@@ -173,7 +205,7 @@
   }
   .drum-item {
     height: 44px; display: flex; align-items: center; justify-content: center;
-    font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 1px;
+    font-family: var(--font-heading); font-size: 32px; letter-spacing: 1px;
     color: var(--muted); transition: color 0.15s, font-size 0.15s; flex-shrink: 0;
     width: 100%;
   }
@@ -182,16 +214,16 @@
   .crop-overlay { position: fixed; inset: 0; background: #000; display: none; flex-direction: column; z-index: 300; }
   .crop-overlay.open { display: flex; }
   .crop-header { display: flex; align-items: center; justify-content: space-between; padding: 56px 20px 16px; flex-shrink: 0; }
-  .crop-title { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 2px; color: white; }
+  .crop-title { font-family: var(--font-heading); font-size: 24px; letter-spacing: 2px; color: white; }
   .crop-canvas-wrap { flex: 1; overflow: hidden; position: relative; }
   .crop-canvas-wrap img { display: block; max-width: 100%; }
   .crop-hint { text-align: center; font-size: 12px; color: #888; padding: 10px 20px; flex-shrink: 0; }
   .crop-actions { display: flex; gap: 12px; padding: 12px 20px 40px; flex-shrink: 0; }
-  .crop-btn { flex: 1; padding: 18px; border: none; border-radius: 20px; cursor: pointer; font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; }
-  .crop-btn.confirm { background: #FF4D2E; color: white; }
-  .crop-btn.cancel { background: #242424; color: #F5F5F0; }
+  .crop-btn { flex: 1; padding: 18px; border: none; border-radius: 20px; cursor: pointer; font-family: var(--font-heading); font-size: 20px; letter-spacing: 2px; }
+  .crop-btn.confirm { background: var(--run); color: white; }
+  .crop-btn.cancel { background: var(--surface2); color: var(--text); }
 
-  .profile-save-btn { width: 100%; padding: 18px; background: var(--run); border: none; border-radius: var(--radius); color: white; font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 3px; cursor: pointer; margin-top: 4px; transition: transform 0.1s, opacity 0.1s; }
+  .profile-save-btn { width: 100%; padding: 18px; background: var(--run); border: none; border-radius: var(--radius); color: white; font-family: var(--font-heading); font-size: 22px; letter-spacing: 3px; cursor: pointer; margin-top: 4px; transition: transform 0.1s, opacity 0.1s; }
   .profile-save-btn:active { transform: scale(0.97); opacity: 0.9; }
   .profile-save-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
@@ -214,9 +246,9 @@
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: flex-end; justify-content: center; z-index: 100; }
   .modal-overlay.open { display: flex; }
   .modal { background: var(--surface); border-radius: 24px 24px 0 0; padding: 24px 20px 40px; width: 100%; max-width: 430px; }
-  .modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 2px; margin-bottom: 16px; }
+  .modal-title { font-family: var(--font-heading); font-size: 24px; letter-spacing: 2px; margin-bottom: 16px; }
   .modal-actions { display: flex; gap: 10px; margin-top: 16px; }
-  .modal-btn { flex: 1; padding: 16px; border: none; border-radius: 14px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; transition: opacity 0.15s; }
+  .modal-btn { flex: 1; padding: 16px; border: none; border-radius: 14px; cursor: pointer; font-family: var(--font-body); font-size: 15px; font-weight: 600; transition: opacity 0.15s; }
   .modal-btn:active { opacity: 0.8; }
   .modal-btn.confirm { background: var(--run); color: white; }
   .modal-btn.cancel { background: var(--surface2); color: var(--text); }
@@ -224,16 +256,16 @@
   /* ── DONE ── */
   #done { padding-top: 60px; align-items: center; text-align: center; }
   .done-icon { font-size: 72px; margin-bottom: 20px; }
-  .done-title { font-family: 'Bebas Neue', sans-serif; font-size: 52px; letter-spacing: 3px; margin-bottom: 8px; }
+  .done-title { font-family: var(--font-heading); font-size: 52px; letter-spacing: 3px; margin-bottom: 8px; }
   .done-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; margin: 32px 0; }
   .stat-card { background: var(--surface); border-radius: var(--radius); padding: 20px; }
-  .stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 40px; letter-spacing: 1px; }
+  .stat-val { font-family: var(--font-heading); font-size: 40px; letter-spacing: 1px; }
   .stat-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
   .done-actions { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: auto; }
 
   /* ── LOADING ── */
   #loading { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 16px; z-index: 200; }
-  .loading-title { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 3px; }
+  .loading-title { font-family: var(--font-heading); font-size: 36px; letter-spacing: 3px; }
   .spinner { width: 32px; height: 32px; border: 3px solid var(--surface2); border-top-color: var(--run); border-radius: 50%; animation: spin 0.8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
   @keyframes phasePulse { 0%{transform:scale(1)} 50%{transform:scale(1.04)} 100%{transform:scale(1)} }
@@ -281,48 +313,68 @@
     </div>
   </div>
   <div class="section-label">Interval Timing</div>
-  <div class="card">
-    <div class="time-input-row">
-      <div class="time-input-group">
-        <label class="has-accent">🏃 RUN (mm:ss)</label>
+  <div class="card" style="padding:0;overflow:hidden;">
+    <div style="display:grid;grid-template-columns:1fr 1px 1fr;">
+      <!-- WORK -->
+      <div style="display:flex;flex-direction:column;gap:10px;padding:16px;">
+        <div style="font-size:11px;font-weight:600;text-align:center;letter-spacing:1px;">
+          <span style="color:var(--run);">WORK</span> <span style="color:var(--muted);font-weight:400;font-size:10px;">(mm:ss)</span>
+        </div>
         <div class="time-picker">
           <button onclick="adjust('run',-5)">−</button>
           <span class="time-val" id="run-min" onclick="openTimeInput('run')" style="cursor:pointer;">01</span>:<span class="time-val" id="run-sec" onclick="openTimeInput('run')" style="cursor:pointer;">00</span>
           <button onclick="adjust('run',5)">+</button>
         </div>
-        <div style="display:flex;gap:6px;margin-top:4px;">
-          <button class="pill-btn" onclick="adjust('run',-15)" style="padding:6px;font-size:11px;flex:1">−15s</button>
-          <button class="pill-btn" onclick="adjust('run',15)" style="padding:6px;font-size:11px;flex:1">+15s</button>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+          <button class="pill-btn" onclick="adjust('run',-15)" style="padding:8px 4px;font-size:12px;">-15s</button>
+          <button class="pill-btn" onclick="adjust('run',15)" style="padding:8px 4px;font-size:12px;">+15s</button>
         </div>
       </div>
-      <div class="time-input-group">
-        <label class="has-accent-walk">🚶 WALK (mm:ss)</label>
+      <!-- Divider -->
+      <div style="background:var(--border);"></div>
+      <!-- REST -->
+      <div style="display:flex;flex-direction:column;gap:10px;padding:16px;">
+        <div style="font-size:11px;font-weight:600;text-align:center;letter-spacing:1px;">
+          <span style="color:var(--walk);">REST</span> <span style="color:var(--muted);font-weight:400;font-size:10px;">(mm:ss)</span>
+        </div>
         <div class="time-picker">
           <button onclick="adjust('walk',-5)">−</button>
           <span class="time-val" id="walk-min" onclick="openTimeInput('walk')" style="cursor:pointer;">00</span>:<span class="time-val" id="walk-sec" onclick="openTimeInput('walk')" style="cursor:pointer;">30</span>
           <button onclick="adjust('walk',5)">+</button>
         </div>
-        <div style="display:flex;gap:6px;margin-top:4px;">
-          <button class="pill-btn" onclick="adjust('walk',-15)" style="padding:6px;font-size:11px;flex:1">−15s</button>
-          <button class="pill-btn" onclick="adjust('walk',15)" style="padding:6px;font-size:11px;flex:1">+15s</button>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+          <button class="pill-btn" onclick="adjust('walk',-15)" style="padding:8px 4px;font-size:12px;">-15s</button>
+          <button class="pill-btn" onclick="adjust('walk',15)" style="padding:8px 4px;font-size:12px;">+15s</button>
         </div>
       </div>
     </div>
   </div>
   <div class="section-label">Workout Duration</div>
-  <div class="card">
-    <div class="duration-mode">
-      <button class="pill-btn active" id="mode-rounds" onclick="setMode('rounds')">By Rounds</button>
-      <button class="pill-btn" id="mode-time" onclick="setMode('time')">By Total Time</button>
-    </div>
-    <div id="rounds-input">
-      <div class="time-input-group"><label>Number of Rounds</label>
-        <div class="time-picker"><button onclick="adjustVal('rounds',-1)">−</button><span class="time-val" id="rounds-val">8</span><button onclick="adjustVal('rounds',1)">+</button></div>
+  <div class="card" style="padding:16px;">
+    <div style="display:flex;align-items:center;gap:16px;">
+      <!-- Counter -->
+      <div style="flex:1;">
+        <div id="rounds-input">
+          <div style="font-size:11px;color:var(--muted);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Number of Rounds</div>
+          <div class="time-picker" style="justify-content:flex-start;gap:8px;">
+            <button onclick="adjustVal('rounds',-1)">−</button>
+            <span class="time-val" id="rounds-val" style="flex:0;min-width:36px;text-align:center;">8</span>
+            <button onclick="adjustVal('rounds',1)">+</button>
+          </div>
+        </div>
+        <div id="totaltime-input" style="display:none;">
+          <div style="font-size:11px;color:var(--muted);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Total Time (min)</div>
+          <div class="time-picker" style="justify-content:flex-start;gap:8px;">
+            <button onclick="adjustVal('total-time',-1)">−</button>
+            <span class="time-val" id="total-time-val" style="flex:0;min-width:36px;text-align:center;">20</span>
+            <button onclick="adjustVal('total-time',1)">+</button>
+          </div>
+        </div>
       </div>
-    </div>
-    <div id="totaltime-input" style="display:none">
-      <div class="time-input-group"><label>Total Time (minutes)</label>
-        <div class="time-picker"><button onclick="adjustVal('total-time',-1)">−</button><span class="time-val" id="total-time-val">20</span><button onclick="adjustVal('total-time',1)">+</button></div>
+      <!-- Mode toggles stacked right -->
+      <div style="display:flex;flex-direction:column;gap:8px;min-width:120px;">
+        <button class="pill-btn active" id="mode-rounds" onclick="setMode('rounds')" style="width:100%;text-align:center;">By Rounds</button>
+        <button class="pill-btn" id="mode-time" onclick="setMode('time')" style="width:100%;text-align:center;">By Total Time</button>
       </div>
     </div>
   </div>
@@ -346,7 +398,7 @@
       <button class="np-side-btn" onclick="spotifyNext()"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-skip-forward"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg></button>
     </div>
   </div>
-  <button class="primary-btn" onclick="startWorkout()">START WORKOUT</button>
+  <button class="primary-btn" onclick="startWorkout()" style="margin-top:auto;">Start Workout</button>
 </div>
 
 <!-- ══════════ TIMER ══════════ -->
@@ -385,7 +437,7 @@
     </div>
   </div>
   <div class="controls">
-    <button class="ctrl-btn ctrl-secondary" onclick="skipPhase()" style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.5px;">SKIP<br>SET</button>
+    <button class="ctrl-btn ctrl-secondary" onclick="skipPhase()" style="font-family:var(--font-body);font-size:12px;font-weight:600;letter-spacing:0.5px;">SKIP<br>SET</button>
     <button class="ctrl-btn" id="play-pause-btn" onclick="togglePause()">PAUSE</button>
     <button class="ctrl-btn ctrl-secondary" onclick="confirmStop()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
   </div>
@@ -408,7 +460,7 @@
       <div id="profile-view-name" style="font-size:20px;font-weight:700;margin-top:10px;">—</div>
       <div id="profile-view-location" style="font-size:13px;color:var(--muted);margin-top:4px;display:none;">📍 <span id="profile-view-location-text"></span></div>
       <div id="profile-view-bio" style="font-size:14px;color:var(--muted);margin-top:8px;text-align:center;line-height:1.5;max-width:280px;display:none;"></div>
-      <button id="edit-profile-btn" onclick="openEditProfile()" style="margin-top:16px;padding:10px 24px;background:var(--surface2);border:none;border-radius:50px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;">Edit Profile</button>
+      <button id="edit-profile-btn" onclick="openEditProfile()" style="margin-top:16px;padding:10px 24px;background:var(--surface2);border:none;border-radius:50px;color:var(--text);font-family:var(--font-body);font-size:13px;font-weight:600;cursor:pointer;">Edit Profile</button>
     </div>
 
     <div class="section-label" style="margin-top:8px;">Saved Presets</div>
@@ -473,6 +525,145 @@
   </div>
 </div>
 
+<!-- ══════════ START COUNTDOWN OVERLAY ══════════ -->
+<div id="start-countdown-overlay" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:200;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
+  <div style="font-family:var(--font-body);font-size:14px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--muted);">GET READY</div>
+  <div id="start-countdown-num" style="font-family:var(--font-heading);font-size:120px;line-height:1;color:var(--run);">5</div>
+  <div style="font-family:var(--font-body);font-size:13px;color:var(--muted);">Workout starting...</div>
+  <button onclick="cancelStartCountdown()" style="margin-top:32px;padding:12px 28px;background:var(--surface2);border:none;border-radius:50px;color:var(--muted);font-family:var(--font-body);font-size:14px;cursor:pointer;">Cancel</button>
+</div>
+
+<!-- ══════════ SETTINGS ══════════ -->
+<div class="screen" id="settings">
+  <div class="profile-header">
+    <button class="icon-btn" onclick="showScreen('profile')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg></button>
+    <div class="profile-header-title">SETTINGS</div>
+    <div style="width:44px;"></div>
+  </div>
+
+  <!-- AUDIO -->
+  <div class="settings-group">
+    <div class="section-label">Audio</div>
+    <div class="card">
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <div class="settings-row-label">Voice Cues</div>
+          <div class="settings-row-desc">Hear "Run!" and "Walk!" during workout</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="setting-voice" checked onchange="saveSetting('voice', this.checked)">
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <div class="settings-row-label">Countdown Beeps</div>
+          <div class="settings-row-desc">3 beeps before each interval ends</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="setting-beeps" checked onchange="saveSetting('beeps', this.checked)">
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+      <div class="settings-row settings-slider-row">
+        <div class="settings-row-info" style="width:100%;">
+          <div class="settings-row-label">Cue Volume</div>
+          <input type="range" class="settings-slider" id="setting-volume" min="0" max="100" value="80" oninput="saveSetting('volume', this.value)">
+          <div class="settings-slider-labels"><span>Quiet</span><span>Loud</span></div>
+        </div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <div class="settings-row-label">Start Countdown</div>
+          <div class="settings-row-desc">Count down before workout begins</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="setting-start-countdown" checked onchange="toggleStartCountdown(this.checked)">
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+      <div class="settings-row" id="countdown-sec-row">
+        <div class="settings-row-info">
+          <div class="settings-row-label">Countdown Duration</div>
+          <div class="settings-row-desc">How many seconds before workout starts</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <button class="icon-btn" style="width:36px;height:36px;font-size:18px;" onclick="adjustCountdownSec(-1)">−</button>
+          <span id="countdown-sec-val" style="font-family:var(--font-heading);font-size:24px;min-width:32px;text-align:center;">5s</span>
+          <button class="icon-btn" style="width:36px;height:36px;font-size:18px;" onclick="adjustCountdownSec(1)">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DISPLAY -->
+  <div class="settings-group">
+    <div class="section-label">Display</div>
+    <div class="card">
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <div class="settings-row-label">Keep Screen On</div>
+          <div class="settings-row-desc">Prevent screen from sleeping during workout</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="setting-wakelock" checked onchange="saveSetting('wakelock', this.checked)">
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <div class="settings-row-label">Count Direction</div>
+          <div class="settings-row-desc">Count up from 0 or down to 0</div>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button class="pill-btn active" id="count-down-btn" onclick="setCountDir('down')">Down</button>
+          <button class="pill-btn" id="count-up-btn" onclick="setCountDir('up')">Up</button>
+        </div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <div class="settings-row-label">Show Round Number</div>
+          <div class="settings-row-desc">Display current round on timer screen</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="setting-showround" checked onchange="saveSetting('showround', this.checked)">
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPOTIFY -->
+  <div class="settings-group">
+    <div class="section-label">Spotify</div>
+    <div class="card">
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <div class="settings-row-label">Volume Duck</div>
+          <div class="settings-row-desc">Lower music volume during audio cues</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="setting-duck" checked onchange="saveSetting('duck', this.checked)">
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+      <div class="settings-row settings-slider-row">
+        <div class="settings-row-info" style="width:100%;">
+          <div class="settings-row-label">Duck Amount</div>
+          <input type="range" class="settings-slider" id="setting-duck-amount" min="0" max="100" value="15" oninput="saveSetting('duckAmount', this.value)">
+          <div class="settings-slider-labels"><span>Silent</span><span>Full volume</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ══════════ DONE ══════════ -->
 <div class="screen" id="done">
   <div class="done-icon">🏅</div>
@@ -496,7 +687,7 @@
       <button class="modal-btn cancel" onclick="document.getElementById('stop-confirm-modal').classList.remove('open')">Keep Going</button>
       <button class="modal-btn confirm" onclick="finishWorkout()">See Summary</button>
     </div>
-    <button onclick="stopWorkout()" style="width:100%;margin-top:10px;padding:14px;background:none;border:none;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;">Discard &amp; Exit</button>
+    <button onclick="stopWorkout()" style="width:100%;margin-top:10px;padding:14px;background:none;border:none;color:var(--muted);font-family:var(--font-body);font-size:14px;cursor:pointer;">Discard &amp; Exit</button>
   </div>
 </div>
 
@@ -541,7 +732,7 @@
       <div style="position:absolute;left:0;right:0;bottom:0;height:66px;background:linear-gradient(to top,var(--surface),transparent);pointer-events:none;z-index:2;border-radius:8px;"></div>
 
       <div class="drum-col" id="drum-min"></div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;width:24px;text-align:center;position:relative;z-index:1;">:</div>
+      <div style="font-family:var(--font-heading);font-size:28px;width:24px;text-align:center;position:relative;z-index:1;">:</div>
       <div class="drum-col" id="drum-sec"></div>
     </div>
   </div>
@@ -1095,7 +1286,7 @@ window.spotifyPlayPause=async()=>{
 };
 window.spotifyNext=()=>sp.connected&&spAPI('/me/player/next','POST');
 window.spotifyPrev=()=>sp.connected&&spAPI('/me/player/previous','POST');
-async function duck(){if(sp.player)await sp.player.setVolume(0.12);}
+async function duck(){if(!_settings.duck||!sp.player)return;const vol=_settings.duckAmount/100;await sp.player.setVolume(vol);}
 async function unduck(ms=1800){if(sp.player)setTimeout(()=>sp.player.setVolume(0.8),ms);}
 
 // ── AUDIO CUES ──
@@ -1170,10 +1361,10 @@ function startAudioClock() {
 function stopAudioClock() {
   if(_audioClockRAF) { cancelAnimationFrame(_audioClockRAF); _audioClockRAF = null; }
 }
-function speak(t){if(!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=1.1;speechSynthesis.speak(u);}
+function speak(t){if(!_settings.voice)return;if(!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=1.1;u.volume=_settings.volume/100;speechSynthesis.speak(u);}
 function playRunCue(){duck();playSound('snd-run');speak('Run!');unduck(1600);}
 function playWalkCue(){duck();playSound('snd-walk');speak('Walk!');unduck(1600);}
-function playCountdown(){playSound('snd-tick');}
+function playCountdown(){if(!_settings.beeps)return;playSound('snd-tick');}
 function playDone(){duck();playSound('snd-done');speak('Workout complete! Great job!');}
 
 // ── SETUP HELPERS ──
@@ -1384,9 +1575,75 @@ function cancelNotifications() {
   _scheduledNotifs = [];
 }
 
+// ── SETTINGS ──
+const SETTINGS_DEFAULTS = {
+  voice: true,
+  beeps: true,
+  volume: 80,
+  wakelock: true,
+  countDir: 'down',
+  showround: true,
+  duck: true,
+  duckAmount: 15,
+  startCountdown: true,
+  startCountdownSec: 5
+};
+
+let _settings = { ...SETTINGS_DEFAULTS };
+
+function loadSettings() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('ir_settings') || '{}');
+    _settings = { ...SETTINGS_DEFAULTS, ...saved };
+  } catch(e) { _settings = { ...SETTINGS_DEFAULTS }; }
+  applySettingsToUI();
+}
+
+function applySettingsToUI() {
+  document.getElementById('setting-voice').checked = _settings.voice;
+  document.getElementById('setting-beeps').checked = _settings.beeps;
+  document.getElementById('setting-volume').value = _settings.volume;
+  document.getElementById('setting-wakelock').checked = _settings.wakelock;
+  document.getElementById('setting-showround').checked = _settings.showround;
+  document.getElementById('setting-duck').checked = _settings.duck;
+  document.getElementById('setting-duck-amount').value = _settings.duckAmount;
+  document.getElementById('setting-start-countdown').checked = _settings.startCountdown;
+  document.getElementById('setting-countdown-sec').value = _settings.startCountdownSec;
+  document.getElementById('countdown-sec-val').textContent = _settings.startCountdownSec + 's';
+  document.getElementById('countdown-sec-row').style.display = _settings.startCountdown ? '' : 'none';
+  setCountDir(_settings.countDir, false);
+}
+
+window.saveSetting = (key, value) => {
+  _settings[key] = value;
+  localStorage.setItem('ir_settings', JSON.stringify(_settings));
+};
+
+window.toggleStartCountdown = (val) => {
+  saveSetting('startCountdown', val);
+  document.getElementById('countdown-sec-row').style.display = val ? '' : 'none';
+};
+
+window.adjustCountdownSec = (d) => {
+  const newVal = Math.min(10, Math.max(3, (_settings.startCountdownSec || 5) + d));
+  saveSetting('startCountdownSec', newVal);
+  document.getElementById('countdown-sec-val').textContent = newVal + 's';
+};
+
+window.setCountDir = (dir, save=true) => {
+  _settings.countDir = dir;
+  document.getElementById('count-down-btn').classList.toggle('active', dir === 'down');
+  document.getElementById('count-up-btn').classList.toggle('active', dir === 'up');
+  if(save) localStorage.setItem('ir_settings', JSON.stringify(_settings));
+};
+
+// Load settings on startup
+document.addEventListener('DOMContentLoaded', loadSettings);
+
 // ── WAKE LOCK ──
 let _wakeLock = null;
 async function requestWakeLock() {
+  if(!_settings.wakelock) return;
   try {
     if('wakeLock' in navigator) {
       _wakeLock = await navigator.wakeLock.request('screen');
@@ -1426,13 +1683,52 @@ document.addEventListener('visibilitychange', async () => {
   }
 });
 
+// ── START COUNTDOWN ──
+let _startCountdownTimer = null;
+
+window.cancelStartCountdown = () => {
+  clearInterval(_startCountdownTimer);
+  _startCountdownTimer = null;
+  document.getElementById('start-countdown-overlay').style.display = 'none';
+};
+
+async function runStartCountdown() {
+  return new Promise((resolve) => {
+    let count = _settings.startCountdownSec || 5;
+    const overlay = document.getElementById('start-countdown-overlay');
+    const numEl = document.getElementById('start-countdown-num');
+    overlay.style.display = 'flex';
+    numEl.textContent = count;
+    playSound('snd-tick');
+
+    _startCountdownTimer = setInterval(() => {
+      count--;
+      if(count <= 0) {
+        clearInterval(_startCountdownTimer);
+        _startCountdownTimer = null;
+        overlay.style.display = 'none';
+        resolve();
+        return;
+      }
+      numEl.textContent = count;
+      // Color shift: orange when close
+      numEl.style.color = count <= 2 ? 'var(--walk)' : 'var(--run)';
+      playSound('snd-tick');
+    }, 1000);
+  });
+}
+
 window.startWorkout=async()=>{
   ensureAudio();
   T.runSec=getTimeSec('run');T.walkSec=getTimeSec('walk');T.phase='run';T.round=1;T.paused=false;T.elapsed=T.runAccum=T.walkAccum=0;T._hiddenAt=null;
   if(window._mode==='rounds'){T.maxRounds=parseInt(document.getElementById('rounds-val').textContent);T.totalLeft=T.maxRounds*(T.runSec+T.walkSec);}
   else{T.totalLeft=parseInt(document.getElementById('total-time-val').textContent)*60;T.maxRounds=Math.floor(T.totalLeft/(T.runSec+T.walkSec));}
   T.phaseLeft=T.runSec;
-  showScreen('timer');updateUI();playRunCue();
+  showScreen('timer');updateUI();
+  if(_settings.startCountdown) {
+    await runStartCountdown();
+  }
+  playRunCue();
   if(sp.connected&&!sp.isPlaying)spAPI('/me/player/play','PUT');
   startAudioKeepalive();
   requestWakeLock();
@@ -1466,7 +1762,7 @@ window.stopWorkout=()=>{
 window.finishWorkout = function finishWorkout(){document.getElementById('stop-confirm-modal').classList.remove('open');T.timer=null;stopAudioClock();cancelNotifications();releaseWakeLock();stopAudioKeepalive();playDone();document.getElementById('done-rounds').textContent=T.round-1;document.getElementById('done-time').textContent=fmtTime(T.elapsed);document.getElementById('done-run').textContent=fmtTime(T.runAccum);document.getElementById('done-walk').textContent=fmtTime(T.walkAccum);showScreen('done');}
 function fmtTime(s){const m=Math.floor(s/60);return m>0?m+'m '+pad(s%60)+'s':s+'s';}
 
-function updateUI(){const run=T.phase==='run',col=run?'var(--run)':'var(--walk)';document.getElementById('phase-label').textContent=run?'RUN':'WALK';document.getElementById('phase-label').style.color=col;document.getElementById('big-time').textContent=pad(Math.floor(T.phaseLeft/60))+':'+pad(T.phaseLeft%60);const nN=run?'WALK':'RUN',nS=run?T.walkSec:T.runSec;document.getElementById('next-label').textContent=`next: ${nN} ${pad(Math.floor(nS/60))}:${pad(nS%60)}`;document.getElementById('round-display').textContent=`ROUND ${T.round} / ${window._mode==='rounds'?T.maxRounds:'∞'}`;document.getElementById('total-remaining').textContent=`TOTAL: ${pad(Math.floor(T.totalLeft/60))}:${pad(T.totalLeft%60)}`;const r=106,circ=2*Math.PI*r,total=run?T.runSec:T.walkSec,pc=document.getElementById('progress-circle');pc.style.strokeDasharray=circ;pc.style.strokeDashoffset=circ*(1-T.phaseLeft/total);pc.style.stroke=col;document.getElementById('play-pause-btn').style.background=col;}
+function updateUI(){const run=T.phase==='run',col=run?'var(--run)':'var(--walk)';document.getElementById('phase-label').textContent=run?'RUN':'WALK';document.getElementById('phase-label').style.color=col;const displaySec=_settings.countDir==='up'?((_settings.countDir==='up'?((run?T.runSec:T.walkSec)-T.phaseLeft):T.phaseLeft)):T.phaseLeft;document.getElementById('big-time').textContent=pad(Math.floor(displaySec/60))+':'+pad(displaySec%60);const nN=run?'WALK':'RUN',nS=run?T.walkSec:T.runSec;document.getElementById('next-label').textContent=`next: ${nN} ${pad(Math.floor(nS/60))}:${pad(nS%60)}`;const rd=document.getElementById('round-display');rd.textContent=`ROUND ${T.round} / ${window._mode==='rounds'?T.maxRounds:'∞'}`;rd.style.display=_settings.showround?'':'none';document.getElementById('total-remaining').textContent=`TOTAL: ${pad(Math.floor(T.totalLeft/60))}:${pad(T.totalLeft%60)}`;const r=106,circ=2*Math.PI*r,total=run?T.runSec:T.walkSec,pc=document.getElementById('progress-circle');pc.style.strokeDasharray=circ;pc.style.strokeDashoffset=circ*(1-T.phaseLeft/total);pc.style.stroke=col;document.getElementById('play-pause-btn').style.background=col;}
 
 window.showScreen=id=>{document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');};
 window.goSetup=()=>showScreen('setup');
