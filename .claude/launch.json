@@ -4,7 +4,7 @@
     {
       "name": "interval-runner",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["serve", "-p", "3000", "--no-clipboard", "-C", "Cache-Control: no-store", "."],
+      "runtimeArgs": ["serve", ".", "-p", "3000", "--no-clipboard"],
       "port": 3000
     }
   ]
