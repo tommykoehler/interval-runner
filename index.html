@@ -284,10 +284,14 @@
   <div class="divider">or</div>
   <div id="auth-error" class="error-msg"></div>
   <div id="auth-success" class="success-msg"></div>
-  <input type="email" id="auth-email" placeholder="Email address"/>
-  <div id="password-field" style="position:relative;display:flex;align-items:center;">
-    <input type="password" id="auth-password" placeholder="Password" style="padding-right:52px;"/>
-    <button onclick="togglePassword()" style="position:absolute;right:16px;background:none;border:none;color:var(--muted);cursor:pointer;padding:0;display:flex;align-items:center;" id="pw-toggle">
+  <div class="profile-field">
+    <div class="profile-field-icon"><i data-feather="mail"></i></div>
+    <input type="email" id="auth-email" placeholder="Email address"/>
+  </div>
+  <div class="profile-field" id="password-field">
+    <div class="profile-field-icon"><i data-feather="lock"></i></div>
+    <input type="password" id="auth-password" placeholder="Password"/>
+    <button onclick="togglePassword()" style="background:none;border:none;color:var(--muted);cursor:pointer;padding:0 14px;display:flex;align-items:center;" id="pw-toggle">
       <i data-feather="eye-off" id="pw-eye-off" style="width:20px;height:20px;"></i>
       <i data-feather="eye" id="pw-eye-on" style="width:20px;height:20px;display:none;"></i>
     </button>
